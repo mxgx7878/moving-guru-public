@@ -1,243 +1,338 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>How It Works — Moving Guru</title>
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
-
-<!-- ═══════ NAVBAR ═══════ -->
-<nav class="navbar" id="navbar">
-  <a href="index.html" class="nav-logo">MOVING <em>GURU</em></a>
-  <div class="nav-links">
-    <a href="index.html" class="nav-link" data-page="home">Home</a>
-    <a href="how-it-works.html" class="nav-link active" data-page="how-it-works">How It Works</a>
-    <a href="community.html" class="nav-link" data-page="community">Community</a>
-    <a href="grow.html" class="nav-link" data-page="grow">Grow</a>
-    <div class="nav-divider"></div>
-    <button class="btn-nav-login" onclick="openModal('login')">Log In</button>
-    <button class="btn-nav-signup" onclick="openModal('signup')">Sign Up</button>
-  </div>
-</nav>
-
-<!-- ═══════ AUTH MODAL ═══════ -->
-<div class="modal-overlay" id="authModal" onclick="closeModalOutside(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">&times;</button>
-    <h2 id="modalTitle">Log In</h2>
-    <p id="modalDesc">Welcome back. Sign in to your Moving Guru account.</p>
-    <div class="modal-field" id="nameField" style="display:none;">
-      <label>Full Name</label>
-      <input type="text" placeholder="Your name" />
-    </div>
-    <div class="modal-field">
-      <label>Email</label>
-      <input type="email" placeholder="you@email.com" />
-    </div>
-    <div class="modal-field">
-      <label>Password</label>
-      <input type="password" placeholder="Your password" />
-    </div>
-    <button class="modal-submit" id="modalSubmit">Log In</button>
-    <div class="modal-toggle" id="modalToggle">
-      Don't have an account? <a onclick="toggleAuthMode()">Sign Up</a>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════ PAGE HERO ═══════ -->
-<div class="page-hero">
-  <div class="page-hero-img">
-    <img src="images/banner1.png" alt="City panoramic view" />
-    <div class="page-hero-overlay"></div>
-  </div>
-  <div class="page-hero-content">
-    <h1>How It <span>Works</span></h1>
-    <p>Your guide to joining the world's first wellness work exchange network.</p>
-  </div>
-</div>
-
-<!-- ═══════ STEPS — FOR INSTRUCTORS ═══════ -->
-<section class="section">
-  <div class="section-inner">
-    <div class="reveal">
-      <div class="section-tag">
-        <div class="section-tag-line"></div>
-        <span class="section-tag-text">For Instructors</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How It Works — Moving Guru</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- ═══════ NAVBAR ═══════ -->
+ <div id="mg-navbar"></div>
+    <!-- ═══════ PAGE HERO ═══════ -->
+    <div class="page-hero">
+      <div class="page-hero-img">
+        <img src="images/banner1.png" alt="City panoramic view" />
+        <div class="page-hero-overlay"></div>
       </div>
-      <h2 class="section-title">Your journey in<br><span>four steps</span></h2>
-      <p class="section-desc">Getting started on Moving Guru is simple. Whether you're an experienced instructor or just beginning your global teaching journey, here's how it works.</p>
-    </div>
-
-    <div class="steps-grid" style="margin-top:48px;">
-      <div class="step-card reveal reveal-d1">
-        <span class="step-num">01</span>
-        <h3>Create Your Profile</h3>
-        <p>Sign up, add your disciplines, languages, travel plans, and availability. Upload photos and tell the community about yourself.</p>
-      </div>
-      <div class="step-card reveal reveal-d2">
-        <span class="step-num">02</span>
-        <h3>Search & Discover</h3>
-        <p>Browse instructors and studios worldwide. Filter by location, discipline, dates, and languages to find your perfect match.</p>
-      </div>
-      <div class="step-card reveal reveal-d3">
-        <span class="step-num">03</span>
-        <h3>Connect Directly</h3>
-        <p>Message studios and instructors peer-to-peer. No middleman. Discuss swaps, placements, and collaborations on your terms.</p>
-      </div>
-      <div class="step-card reveal reveal-d4">
-        <span class="step-num">04</span>
-        <h3>Move & Teach</h3>
-        <p>Organise your visa, flights, and accommodation. Travel the world doing what you love — teaching movement.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════ ABOUT US ═══════ -->
-<section class="section bg-warm">
-  <div class="section-inner">
-    <div class="about-grid">
-      <div class="about-image reveal">
-        <img src="images/instructor.png" alt="Instructor in studio" />
-      </div>
-      <div class="about-text reveal reveal-d2">
-        <div class="section-tag">
-          <div class="section-tag-line"></div>
-          <span class="section-tag-text">About Us</span>
-        </div>
-        <h2>Built by movers, <span>for movers</span></h2>
-        <p>Moving Guru was born from a simple idea: talented wellness instructors shouldn't be limited by geography. Whether you're a Pilates teacher dreaming of Bali, a yoga instructor curious about Berlin, or a boxing coach ready for Buenos Aires — this platform is your launchpad.</p>
-        <p>We believe in direct, honest connections. No recruitment agencies taking a cut. No corporate middlemen. Just real people helping each other find incredible teaching opportunities around the world.</p>
+      <div class="page-hero-content">
+        <h1>How It <span>Works</span></h1>
+        <p>
+          Your guide to joining the world's first wellness work exchange
+          network.
+        </p>
       </div>
     </div>
 
-    <!-- ═══════ STUDIO CALLOUT ═══════ -->
-    <div class="studio-callout reveal">
-      <div class="section-tag" style="margin-bottom:20px;">
-        <div class="section-tag-line" style="background:var(--lime);"></div>
-        <span class="section-tag-text" style="color:rgba(255,255,255,0.35);">For Studios</span>
-      </div>
-      <h2>Are you a studio looking for skilled substitutes or full-time staff?</h2>
-      <p>Create your studio profile now and always find a Guru to fill in the roster. We have members from all over the world ready to share their talents and passions with your clients.</p>
-      <p>Your instructor is going away for a month? Find their substitute here at Moving Guru. Whether you need someone for a week or a full season, our network of passionate, qualified instructors is ready to step in and keep your classes running.</p>
-      <button class="btn-lime" onclick="openModal('signup')">Create Studio Profile</button>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════ IMAGE BANNER ═══════ -->
-<div class="image-banner">
-  <img src="images/explore.jpg" alt="Exploring the world" />
-  <div class="image-banner-overlay"></div>
-</div>
-
-<!-- ═══════ SWAP OR GET HIRED ═══════ -->
-<section class="section">
-  <div class="section-inner">
-    <div class="swap-grid">
-      <div class="swap-text reveal">
-        <div class="section-tag">
-          <div class="section-tag-line"></div>
-          <span class="section-tag-text">Two Paths</span>
-        </div>
-        <h2>Swap or get<br><span>hired directly</span></h2>
-        <p>Whether you want to exchange positions with another instructor or get hired directly by a studio overseas — Moving Guru makes it happen. No recruitment fees. No middlemen.</p>
-        <div class="swap-option">
-          <div class="swap-option-icon" style="background:var(--lime);color:var(--dark);">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+    <!-- ═══════ STEPS — FOR INSTRUCTORS ═══════ -->
+    <section class="section">
+      <div class="section-inner">
+        <div class="reveal">
+          <div class="section-tag">
+            <div class="section-tag-line"></div>
+            <span class="section-tag-text">For Instructors</span>
           </div>
-          <div>
-            <h4>Swap</h4>
-            <p>Exchange positions with an instructor in another country. You teach at their studio, they teach at yours.</p>
-          </div>
+          <h2 class="section-title">
+            Your journey in<br /><span>four steps</span>
+          </h2>
+          <p class="section-desc">
+            Getting started on Moving Guru is simple. Whether you're an
+            experienced instructor or just beginning your global teaching
+            journey, here's how it works.
+          </p>
         </div>
-        <div class="swap-option">
-          <div class="swap-option-icon" style="background:var(--dark);color:var(--lime);">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+
+        <div class="steps-grid" style="margin-top: 48px">
+          <div class="step-card reveal reveal-d1">
+            <span class="step-num">01</span>
+            <h3>Create Your Profile</h3>
+            <p>
+              Sign up, add your disciplines, languages, travel plans, and
+              availability. Upload photos and tell the community about yourself.
+            </p>
           </div>
-          <div>
-            <h4>Direct Hire</h4>
-            <p>Get hired directly by a studio abroad. Work on their terms, explore a new city, grow your career.</p>
+          <div class="step-card reveal reveal-d2">
+            <span class="step-num">02</span>
+            <h3>Search & Discover</h3>
+            <p>
+              Browse instructors and studios worldwide. Filter by location,
+              discipline, dates, and languages to find your perfect match.
+            </p>
+          </div>
+          <div class="step-card reveal reveal-d3">
+            <span class="step-num">03</span>
+            <h3>Connect Directly</h3>
+            <p>
+              Message studios and instructors peer-to-peer. No middleman.
+              Discuss swaps, placements, and collaborations on your terms.
+            </p>
+          </div>
+          <div class="step-card reveal reveal-d4">
+            <span class="step-num">04</span>
+            <h3>Move & Teach</h3>
+            <p>
+              Organise your visa, flights, and accommodation. Travel the world
+              doing what you love — teaching movement.
+            </p>
           </div>
         </div>
       </div>
-      <div class="reveal reveal-d2">
-        <div class="chat-mockup">
-          <div class="chat-label">Direct Messages</div>
-          <div class="chat-messages">
-            <div class="msg-sent">
-              <div class="bubble"><p>Hi Erik! I see you're looking to come to Sydney this November? I'd love to do a swap — my studio in Marrickville is close to the CBD and the team is super welcoming!</p></div>
-              <div class="msg-meta">Bambi — Sydney</div>
+    </section>
+
+    <!-- ═══════ ABOUT US ═══════ -->
+    <section class="section bg-warm">
+      <div class="section-inner">
+        <div class="about-grid">
+          <div class="about-image reveal">
+            <img src="images/instructor.png" alt="Instructor in studio" />
+          </div>
+          <div class="about-text reveal reveal-d2">
+            <div class="section-tag">
+              <div class="section-tag-line"></div>
+              <span class="section-tag-text">About Us</span>
             </div>
-            <div class="msg-recv">
-              <div class="bubble"><p>Hi! Nice to meet you! This actually aligns perfectly — I'm looking for work in Sydney this November. Let's make this happen!</p></div>
-              <div class="msg-meta">Erik — Berlin</div>
+            <h2>Built by movers, <span>for movers</span></h2>
+            <p>
+              Moving Guru was born from a simple idea: talented wellness
+              instructors shouldn't be limited by geography. Whether you're a
+              Pilates teacher dreaming of Bali, a yoga instructor curious about
+              Berlin, or a boxing coach ready for Buenos Aires — this platform
+              is your launchpad.
+            </p>
+            <p>
+              We believe in direct, honest connections. No recruitment agencies
+              taking a cut. No corporate middlemen. Just real people helping
+              each other find incredible teaching opportunities around the
+              world.
+            </p>
+          </div>
+        </div>
+
+        <!-- ═══════ STUDIO CALLOUT ═══════ -->
+        <div class="studio-callout reveal">
+          <div class="section-tag" style="margin-bottom: 20px">
+            <div class="section-tag-line" style="background: var(--lime)"></div>
+            <span
+              class="section-tag-text"
+              style="color: rgba(255, 255, 255, 0.35)"
+              >For Studios</span
+            >
+          </div>
+          <h2>
+            Are you a studio looking for skilled substitutes or full-time staff?
+          </h2>
+          <p>
+            Create your studio profile now and always find a Guru to fill in the
+            roster. We have members from all over the world ready to share their
+            talents and passions with your clients.
+          </p>
+          <p>
+            Your instructor is going away for a month? Find their substitute
+            here at Moving Guru. Whether you need someone for a week or a full
+            season, our network of passionate, qualified instructors is ready to
+            step in and keep your classes running.
+          </p>
+          <button class="btn-lime" onclick="openModal('signup')">
+            Create Studio Profile
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ IMAGE BANNER ═══════ -->
+    <div class="image-banner">
+      <img src="images/explore.jpg" alt="Exploring the world" />
+      <div class="image-banner-overlay"></div>
+    </div>
+
+    <!-- ═══════ SWAP OR GET HIRED ═══════ -->
+    <section class="section">
+      <div class="section-inner">
+        <div class="swap-grid">
+          <div class="swap-text reveal">
+            <div class="section-tag">
+              <div class="section-tag-line"></div>
+              <span class="section-tag-text">Two Paths</span>
+            </div>
+            <h2>Swap or get<br /><span>hired directly</span></h2>
+            <p>
+              Whether you want to exchange positions with another instructor or
+              get hired directly by a studio overseas — Moving Guru makes it
+              happen. No recruitment fees. No middlemen.
+            </p>
+            <div class="swap-option">
+              <div
+                class="swap-option-icon"
+                style="background: var(--lime); color: var(--dark)"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path
+                    d="M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h4>Swap</h4>
+                <p>
+                  Exchange positions with an instructor in another country. You
+                  teach at their studio, they teach at yours.
+                </p>
+              </div>
+            </div>
+            <div class="swap-option">
+              <div
+                class="swap-option-icon"
+                style="background: var(--dark); color: var(--lime)"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </div>
+              <div>
+                <h4>Direct Hire</h4>
+                <p>
+                  Get hired directly by a studio abroad. Work on their terms,
+                  explore a new city, grow your career.
+                </p>
+              </div>
             </div>
           </div>
-          <div class="chat-input-mock">
-            <span>Message...</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          <div class="reveal reveal-d2">
+            <div class="chat-mockup">
+              <div class="chat-label">Direct Messages</div>
+              <div class="chat-messages">
+                <div class="msg-sent">
+                  <div class="bubble">
+                    <p>
+                      Hi Erik! I see you're looking to come to Sydney this
+                      November? I'd love to do a swap — my studio in
+                      Marrickville is close to the CBD and the team is super
+                      welcoming!
+                    </p>
+                  </div>
+                  <div class="msg-meta">Bambi — Sydney</div>
+                </div>
+                <div class="msg-recv">
+                  <div class="bubble">
+                    <p>
+                      Hi! Nice to meet you! This actually aligns perfectly — I'm
+                      looking for work in Sydney this November. Let's make this
+                      happen!
+                    </p>
+                  </div>
+                  <div class="msg-meta">Erik — Berlin</div>
+                </div>
+              </div>
+              <div class="chat-input-mock">
+                <span>Message...</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ═══════ CTA ═══════ -->
-<section class="section bg-dark cta-section" style="padding:120px 40px;">
-  <div class="reveal">
-    <h2>Ready to <span>move</span>?</h2>
-    <p>Create your profile and start connecting with studios and instructors worldwide.</p>
-    <div class="cta-buttons">
-      <button class="btn-cta-primary" onclick="openModal('signup')">Get Started</button>
-      <a href="community.html" class="btn-cta-outline">Browse Profiles</a>
-    </div>
-  </div>
-</section>
+    <!-- ═══════ CTA ═══════ -->
+    <section class="section bg-dark cta-section" style="padding: 120px 40px">
+      <div class="reveal">
+        <h2>Ready to <span>move</span>?</h2>
+        <p>
+          Create your profile and start connecting with studios and instructors
+          worldwide.
+        </p>
+        <div class="cta-buttons">
+          <button class="btn-cta-primary" onclick="openModal('signup')">
+            Get Started
+          </button>
+          <a href="community.html" class="btn-cta-outline">Browse Profiles</a>
+        </div>
+      </div>
+    </section>
 
-<!-- ═══════ FOOTER ═══════ -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-grid">
-      <div>
-        <div class="footer-brand">MOVING GURU</div>
-        <p class="footer-brand-desc">The global wellness network connecting movement professionals worldwide.</p>
-        <p class="footer-email">Admin@movingguru.co</p>
+    <!-- ═══════ FOOTER ═══════ -->
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-grid">
+          <div>
+            <div class="footer-brand">MOVING GURU</div>
+            <p class="footer-brand-desc">
+              The global wellness network connecting movement professionals
+              worldwide.
+            </p>
+            <p class="footer-email">Admin@movingguru.co</p>
+          </div>
+          <div class="footer-col">
+            <h4>Platform</h4>
+            <a href="index.html">Home</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="community.html">Community</a>
+            <a href="grow.html">Grow</a>
+          </div>
+          <div class="footer-col">
+            <h4>Company</h4>
+            <a href="how-it-works.html">Our Story</a>
+            <a href="#">Contact</a>
+            <a href="#">Terms & Conditions</a>
+            <a href="#">Privacy Policy</a>
+          </div>
+          <div class="footer-col">
+            <h4>Connect</h4>
+            <a href="#">Instagram</a>
+            <a
+              href="#"
+              onclick="
+                openModal('signup');
+                return false;
+              "
+              >Join Now</a
+            >
+            <a
+              href="#"
+              onclick="
+                openModal('login');
+                return false;
+              "
+              >Log In</a
+            >
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 Moving Guru. All rights reserved.</p>
+        </div>
       </div>
-      <div class="footer-col">
-        <h4>Platform</h4>
-        <a href="index.html">Home</a>
-        <a href="how-it-works.html">How It Works</a>
-        <a href="community.html">Community</a>
-        <a href="grow.html">Grow</a>
-      </div>
-      <div class="footer-col">
-        <h4>Company</h4>
-        <a href="how-it-works.html">Our Story</a>
-        <a href="#">Contact</a>
-        <a href="#">Terms & Conditions</a>
-        <a href="#">Privacy Policy</a>
-      </div>
-      <div class="footer-col">
-        <h4>Connect</h4>
-        <a href="#">Instagram</a>
-        <a href="#" onclick="openModal('signup');return false;">Join Now</a>
-        <a href="#" onclick="openModal('login');return false;">Log In</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2026 Moving Guru. All rights reserved.</p>
-    </div>
-  </div>
-</footer>
-
-<script src="js/main.js"></script>
-<script src="js/translate.js"></script>
-
-</body>
+    </footer>
+    <script src="js/navbar.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/translate.js"></script>
+  </body>
 </html>
