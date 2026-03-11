@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — Moving Guru</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <style>
+
+    .pricing-hero {
+      position: relative;
+      height: 44vh;
+      min-height: 320px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+      padding: 0 40px 56px;
+      margin-top: 62px;
+      background: var(--dark);
+    }
+    .pricing-hero-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #3E3D38 0%, #2a2925 60%, #1a1a18 100%);
+      overflow: hidden;
+    }
+    .pricing-hero-bg::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,252,166,0.08) 0%, transparent 70%);
+    }
+    .pricing-hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1140px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .pricing-hero-content h1 {
+      font-family: 'Unbounded', cursive;
+      font-size: clamp(34px, 5vw, 56px);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.05;
+    }
+    .pricing-hero-content h1 span { color: var(--lime); }
+    .pricing-hero-content p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 12px;
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .promo-banner {
+      background: linear-gradient(135deg, var(--orange), #d4810f);
+      padding: 28px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .promo-banner::before {
+      content: 'LAUNCH PROMO';
+      position: absolute;
+      top: 50%;
+      right: 40px;
+      transform: translateY(-50%);
+      font-family: 'Unbounded', cursive;
+      font-size: 64px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.06);
+      white-space: nowrap;
+    }
+    .promo-inner { max-width: 1140px; margin: 0 auto; position: relative; z-index: 1; }
+    .promo-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 100px;
+      padding: 4px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+    .promo-title {
+      font-family: 'Unbounded', cursive;
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .promo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+    .promo-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .promo-item-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .promo-item p { font-size: 13px; color: rgba(255,255,255,0.9); line-height: 1.5; margin: 0; font-weight: 500; }
+    .promo-item strong { color: #fff; }
+
+    .plans-section { padding: 80px 40px; background: var(--bg); }
+    .plans-inner { max-width: 1140px; margin: 0 auto; }
+    .plans-header { text-align: center; margin-bottom: 56px; }
+    .plans-header h2 {
+      font-family: 'Unbounded', cursive;
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900;
+      color: var(--dark);
+      margin-bottom: 12px;
+    }
+    .plans-header h2 span { color: var(--coral); }
+    .plans-header p { font-size: 15px; color: var(--text-mid); max-width: 480px; margin: 0 auto; line-height: 1.7; }
+
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      align-items: stretch;
+    }
+    .plan-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
+      overflow: hidden;
+    }
+    .plan-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.07); }
+    .plan-card.popular { border-color: var(--coral); box-shadow: 0 8px 40px rgba(206,79,86,0.12); }
+    .plan-card.popular::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--coral), var(--orange));
+    }
+    .plan-popular-badge {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: var(--coral);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+    .plan-name {
+      font-family: 'Unbounded', cursive;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    .plan-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
+    .plan-currency {
+      font-family: 'Unbounded', cursive;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-top: 6px;
+    }
+    .plan-amount {
+      font-family: 'Unbounded', cursive;
+      font-size: 56px;
+      font-weight: 900;
+      color: var(--dark);
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    .plan-amount.popular-price { color: var(--coral); }
+    .plan-per { font-size: 13px; color: var(--text-light); font-weight: 500; margin-left: 4px; }
+    .plan-desc { font-size: 13px; color: var(--text-light); margin-bottom: 28px; line-height: 1.5; }
+    .plan-saving {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1a8a50;
+      background: rgba(107,230,164,0.15);
+      border-radius: 6px;
+      padding: 4px 10px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    .plan-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+    .plan-features {
+      list-style: none;
+      margin: 0 0 32px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+    .plan-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: var(--text-mid); }
+    .feature-check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: rgba(107,230,164,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .feature-check svg { stroke: #1a8a50; }
+    .plan-cta {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+    }
+    .plan-cta-outline { background: transparent; color: var(--dark); border: 1px solid var(--border); }
+    .plan-cta-outline:hover { border-color: var(--text-mid); }
+    .plan-cta-filled { background: var(--coral); color: #fff; border: none; }
+    .plan-cta-filled:hover { transform: scale(1.02); box-shadow: 0 4px 20px rgba(206,79,86,0.25); }
+
+    .for-section { padding: 80px 40px; background: var(--bg-sand); }
+    .for-inner { max-width: 1140px; margin: 0 auto; }
+    .for-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 48px; }
+    .for-card { background: var(--white); border-radius: var(--radius-lg); padding: 36px; border: 1px solid var(--border); }
+    .for-card-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; }
+    .for-card h3 { font-family: 'Unbounded', cursive; font-size: 18px; font-weight: 800; color: var(--dark); margin-bottom: 12px; }
+    .for-card p { font-size: 14px; color: var(--text-mid); line-height: 1.75; margin-bottom: 20px; }
+    .for-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    .for-list li { font-size: 13px; color: var(--text-mid); display: flex; align-items: center; gap: 8px; }
+    .for-list li::before { content: '✓'; color: var(--coral); font-weight: 700; flex-shrink: 0; }
+
+    .sponsorship-section { padding: 80px 40px; background: var(--dark); position: relative; overflow: hidden; }
+    .sponsorship-section::before {
+      content: '';
+      position: absolute;
+      bottom: -100px; left: -100px;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,252,166,0.06) 0%, transparent 70%);
+    }
+    .sponsorship-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .sponsorship-text h2 {
+      font-family: 'Unbounded', cursive;
+      font-size: clamp(26px, 3.5vw, 40px);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .sponsorship-text h2 span { color: var(--lime); }
+    .sponsorship-text p { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.8; margin-bottom: 14px; }
+    .sponsorship-milestone { margin-top: 28px; }
+    .milestone-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.3); margin-bottom: 10px; }
+    .milestone-bar-wrap { background: rgba(255,255,255,0.08); border-radius: 100px; height: 8px; overflow: hidden; margin-bottom: 8px; }
+    .milestone-bar {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--lime), rgba(245,252,166,0.6));
+      width: 3%;
+      transition: width 1.5s ease;
+    }
+    .milestone-numbers { display: flex; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,0.3); }
+    .milestone-current { font-family: 'Unbounded', cursive; font-size: 13px; color: var(--lime); font-weight: 700; }
+
+    .sponsorship-who { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-lg); padding: 32px; }
+    .sponsorship-who h3 { font-family: 'Unbounded', cursive; font-size: 15px; font-weight: 700; color: var(--lime); margin-bottom: 20px; }
+    .sponsor-recipient { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .sponsor-recipient:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+    .sponsor-icon { font-size: 28px; flex-shrink: 0; }
+    .sponsor-info h4 { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .sponsor-info p { font-size: 12px; color: rgba(255,255,255,0.4); margin: 0; line-height: 1.5; }
+
+    /* ── FAQ ── */
+    .faq-section { padding: 80px 40px; }
+    .faq-inner { max-width: 720px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 22px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark);
+      cursor: pointer;
+      text-align: left;
+      gap: 20px;
+      transition: color 0.2s;
+    }
+    .faq-question:hover { color: var(--coral); }
+    .faq-icon {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+      color: var(--text-light);
+      transition: all 0.25s;
+      line-height: 1;
+    }
+    .faq-item.open .faq-icon {
+      background: var(--coral);
+      border-color: var(--coral);
+      color: #fff;
+      transform: rotate(45deg);
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.75;
+    }
+    .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 22px; }
+
+    @media (max-width: 900px) {
+      .plans-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+      .for-grid { grid-template-columns: 1fr; }
+      .sponsorship-inner { grid-template-columns: 1fr; gap: 40px; }
+      .promo-grid { grid-template-columns: 1fr; }
+      .pricing-hero { padding: 0 20px 40px; }
+      .plans-section, .for-section, .sponsorship-section, .faq-section { padding: 60px 20px; }
+      .promo-banner { padding: 28px 20px; }
+    }
+    @media (max-width: 600px) {
+      .plan-card { padding: 28px 20px; }
+      .for-card { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="mg-navbar"></div>
+
+<!-- ═══════ HERO ═══════ -->
+<div class="pricing-hero">
+  <div class="pricing-hero-bg"></div>
+  <div class="pricing-hero-content">
+    <div class="section-tag" style="margin-bottom:16px;">
+      <div class="section-tag-line" style="background:var(--lime);"></div>
+      <span class="section-tag-text" style="color:rgba(255,255,255,0.35);">Membership</span>
+    </div>
+    <h1>Simple, honest <span>pricing</span></h1>
+    <p>One subscription. Every instructor, every studio, every opportunity — globally. No hidden fees, no commissions.</p>
+  </div>
+</div>
+
+<!-- ═══════ LAUNCH PROMO ═══════ -->
+<div class="promo-banner">
+  <div class="promo-inner">
+    <div class="promo-tag">🔥 Launch Promotion — Limited Time</div>
+    <div class="promo-title">Founding Member Offers</div>
+    <div class="promo-grid">
+      <div class="promo-item">
+        <div class="promo-item-icon">🏆</div>
+        <p><strong>34 Studios worldwide</strong> receive free lifetime membership — building our founding studio network.</p>
+      </div>
+      <div class="promo-item">
+        <div class="promo-item-icon">🧘</div>
+        <p><strong>100 Instructors</strong> (a few from each discipline) receive free lifetime membership.</p>
+      </div>
+      <div class="promo-item">
+        <div class="promo-item-icon">🌍</div>
+        <p><strong>100 Studios internationally</strong> receive first 6 months free to help build the global network.</p>
+      </div>
+      <div class="promo-item">
+        <div class="promo-item-icon">⚡</div>
+        <p><strong>First 20,000 Founding Members</strong> — join in launch month and get 3 months for just <strong>$2</strong>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ PLANS ═══════ -->
+<section class="plans-section">
+  <div class="plans-inner">
+    <div class="plans-header reveal">
+      <div class="section-tag" style="justify-content:center;">
+        <div class="section-tag-line"></div>
+        <span class="section-tag-text">Choose Your Plan</span>
+        <div class="section-tag-line"></div>
+      </div>
+      <h2>Invest in your <span>journey</span></h2>
+      <p>All plans include full access to the entire Moving Guru network — search, connect, and message globally.</p>
+    </div>
+
+    <div class="plans-grid">
+
+      <!-- Monthly -->
+      <div class="plan-card reveal reveal-d1">
+        <div class="plan-name">Monthly</div>
+        <div class="plan-price">
+          <span class="plan-currency">$</span>
+          <span class="plan-amount">15</span>
+          <span class="plan-per">/ month</span>
+        </div>
+        <div class="plan-desc">Perfect for testing the waters. Full access, cancel anytime.</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Full profile with photos &amp; bio
+          </li>
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Appear in global search results
+          </li>
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Direct messaging with any member
+          </li>
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Access to Grow events &amp; trainings
+          </li>
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Save favourite profiles
+          </li>
+        </ul>
+        <button class="plan-cta plan-cta-outline" onclick="openModal('signup')">Get Started</button>
+      </div>
+
+      <!-- 6 Months POPULAR -->
+      <div class="plan-card popular reveal reveal-d2">
+        <div class="plan-popular-badge">Most Popular</div>
+        <div class="plan-name">6 Months</div>
+        <div class="plan-price">
+          <span class="plan-currency" style="color:var(--coral);">$</span>
+          <span class="plan-amount popular-price">45</span>
+          <span class="plan-per">total</span>
+        </div>
+        <div class="plan-desc">Best value for active job seekers. Save $45 vs monthly.</div>
+        <div class="plan-saving">💚 Save $45 — just $7.50/month</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Everything in Monthly
+          </li>
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Priority search placement
+          </li>
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Profile verified badge
+          </li>
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Advanced filters &amp; search
+          </li>
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Email support
+          </li>
+        </ul>
+        <button class="plan-cta plan-cta-filled" onclick="openModal('signup')">Get Started</button>
+      </div>
+
+      <!-- 12 Months -->
+      <div class="plan-card reveal reveal-d3">
+        <div class="plan-name">12 Months</div>
+        <div class="plan-price">
+          <span class="plan-currency">$</span>
+          <span class="plan-amount">60</span>
+          <span class="plan-per">total</span>
+        </div>
+        <div class="plan-desc">For the committed global instructor. Maximum savings, year-round access.</div>
+        <div class="plan-saving">💚 Save $120 — just $5/month</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Everything in 6 Months
+          </li>
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Top search position all year
+          </li>
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Founding member status
+          </li>
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Early access to new features
+          </li>
+          <li class="plan-feature">
+            <div class="feature-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Priority community support
+          </li>
+        </ul>
+        <button class="plan-cta plan-cta-outline" onclick="openModal('signup')">Get Started</button>
+      </div>
+
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--text-light);margin-top:28px;">
+      Prices in USD &nbsp;·&nbsp; Secure payment via Stripe &nbsp;·&nbsp; Cancel anytime on monthly plans
+    </p>
+  </div>
+</section>
+
+<!-- ═══════ WHO IS IT FOR ═══════ -->
+<section class="for-section">
+  <div class="for-inner">
+    <div class="reveal" style="text-align:center;margin-bottom:48px;">
+      <div class="section-tag" style="justify-content:center;">
+        <div class="section-tag-line"></div>
+        <span class="section-tag-text">Who It's For</span>
+        <div class="section-tag-line"></div>
+      </div>
+      <h2 class="section-title" style="max-width:none;text-align:center;">One membership, <span>two paths</span></h2>
+    </div>
+    <div class="for-grid">
+      <div class="for-card reveal">
+        <div class="for-card-icon" style="background:rgba(206,79,86,0.1);">🧘</div>
+        <h3>For Instructors</h3>
+        <p>You're a skilled wellness professional ready to teach, travel, and connect with studios worldwide. Your Moving Guru profile is your global CV.</p>
+        <ul class="for-list">
+          <li>Create a searchable profile with photos &amp; disciplines</li>
+          <li>Set your availability and travel destinations</li>
+          <li>Connect directly with studios — no agency fees</li>
+          <li>Arrange swaps or direct placements</li>
+          <li>Toggle "Actively Seeking" on/off anytime</li>
+        </ul>
+      </div>
+      <div class="for-card reveal reveal-d2">
+        <div class="for-card-icon" style="background:rgba(45,164,214,0.1);">🏢</div>
+        <h3>For Studios</h3>
+        <p>You need skilled cover, fresh energy, or a full-time international hire. Browse thousands of vetted instructors and connect directly — no middlemen.</p>
+        <ul class="for-list">
+          <li>Create a studio profile with your location &amp; needs</li>
+          <li>Search by discipline, availability &amp; language</li>
+          <li>Post your studio for instructors to discover</li>
+          <li>Arrange swaps to send your team abroad too</li>
+          <li>Build a roster of trusted global instructors</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SPONSORSHIP ═══════ -->
+<section class="sponsorship-section">
+  <div class="sponsorship-inner">
+    <div class="sponsorship-text reveal">
+      <div class="section-tag" style="margin-bottom:20px;">
+        <div class="section-tag-line" style="background:var(--lime);"></div>
+        <span class="section-tag-text" style="color:rgba(255,255,255,0.35);">The Big Dream</span>
+      </div>
+      <h2>Sponsorship <span>Program</span></h2>
+      <p>Once we reach 200,000 subscribers, we will launch our Sponsorship Program. We believe that to be truly successful, you must give back.</p>
+      <p>This program will fund individuals to train or upskill in their chosen discipline — because movement should be accessible to everyone.</p>
+      <div class="sponsorship-milestone">
+        <div class="milestone-label">Progress to 200,000 members</div>
+        <div class="milestone-bar-wrap">
+          <div class="milestone-bar" id="milestoneBar"></div>
+        </div>
+        <div class="milestone-numbers">
+          <span class="milestone-current">Growing daily ✨</span>
+          <span>200,000</span>
+        </div>
+      </div>
+    </div>
+    <div class="sponsorship-who reveal reveal-d2">
+      <h3>Who will receive funding?</h3>
+      <div class="sponsor-recipient">
+        <div class="sponsor-icon">🌏</div>
+        <div class="sponsor-info">
+          <h4>Refugees &amp; Displaced Persons</h4>
+          <p>Movement as a path to community, income, and belonging in a new country.</p>
+        </div>
+      </div>
+      <div class="sponsor-recipient">
+        <div class="sponsor-icon">💚</div>
+        <div class="sponsor-info">
+          <h4>Low Income Earners</h4>
+          <p>Removing financial barriers so passion and talent can flourish — not just privilege.</p>
+        </div>
+      </div>
+      <div class="sponsor-recipient">
+        <div class="sponsor-icon">⭐</div>
+        <div class="sponsor-info">
+          <h4>Community Champions</h4>
+          <p>Those already making an impact who deserve to be celebrated and supported further.</p>
+        </div>
+      </div>
+      <div class="sponsor-recipient">
+        <div class="sponsor-icon">🔄</div>
+        <div class="sponsor-info">
+          <h4>Life Changers</h4>
+          <p>People facing major life events who need support to pivot, grow, and find new purpose.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FAQ ═══════ -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <div class="reveal" style="text-align:center;margin-bottom:48px;">
+      <h2 class="section-title" style="max-width:none;text-align:center;">Common <span>questions</span></h2>
+    </div>
+    <div id="faqList"></div>
+  </div>
+</section>
+
+<!-- ═══════ CTA ═══════ -->
+<section class="section bg-dark cta-section" style="padding:120px 40px;">
+  <div class="reveal">
+    <h2>Start your <span>journey</span></h2>
+    <p>Join thousands of movement professionals already on Moving Guru. Your next opportunity is waiting.</p>
+    <div class="cta-buttons">
+      <button class="btn-cta-primary" onclick="openModal('signup')">Create Free Profile</button>
+      <a href="community.html" class="btn-cta-outline">Browse Profiles</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">MOVING GURU</div>
+        <p class="footer-brand-desc">The global wellness network connecting movement professionals worldwide.</p>
+        <p class="footer-email">Admin@movingguru.co</p>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <a href="index.html">Home</a>
+        <a href="how-it-works.html">How It Works</a>
+        <a href="community.html">Community</a>
+        <a href="grow.html">Grow</a>
+        <a href="pricing.html">Pricing</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="how-it-works.html">Our Story</a>
+        <a href="#">Contact</a>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="#">Instagram</a>
+        <a href="#" onclick="openModal('signup');return false;">Join Now</a>
+        <a href="#" onclick="openModal('login');return false;">Log In</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Moving Guru. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/navbar.js"></script>
+<script src="js/main.js"></script>
+<script src="js/translate.js"></script>
+<script>
+  var FAQS = [
+    {
+      q: "Is browsing profiles really free?",
+      a: "Yes — anyone can browse the community and see profiles without signing up. A subscription is only required to message other members, create your own profile, and appear in search results."
+    },
+    {
+      q: "Can I cancel my monthly subscription anytime?",
+      a: "Absolutely. Monthly plans can be cancelled at any time with no penalty. Your access continues until the end of the billing period."
+    },
+    {
+      q: "Does Moving Guru take a commission on placements?",
+      a: "Never. Moving Guru is a peer-to-peer connection platform. All arrangements — pay, hours, conditions — are agreed directly between the instructor and studio. We take no commission whatsoever."
+    },
+    {
+      q: "What's the difference between a swap and a direct hire?",
+      a: "A swap is when two instructors exchange positions — you teach at their studio while they teach at yours. Direct hire is when a studio brings you on to teach for a set period. Both are facilitated through the platform."
+    },
+    {
+      q: "How does the Launch Promo work?",
+      a: "The founding member offer (3 months for $2) is available only to members who join during our launch month, capped at the first 20,000 people. Once those spots are filled, standard pricing applies."
+    },
+    {
+      q: "What currencies are accepted?",
+      a: "All prices are listed in USD. Stripe handles payment processing and will automatically convert to your local currency at checkout."
+    }
+  ];
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var list = document.getElementById('faqList');
+
+    /* No 'reveal' class on FAQ items — they are injected after observeAll()
+       has already run, so they would stay opacity:0 forever. Show directly. */
+    list.innerHTML = FAQS.map(function (f, i) {
+      return '<div class="faq-item" id="faq-' + i + '">' +
+        '<button class="faq-question" onclick="toggleFaq(' + i + ')">' +
+          f.q +
+          '<span class="faq-icon">+</span>' +
+        '</button>' +
+        '<div class="faq-answer">' + f.a + '</div>' +
+      '</div>';
+    }).join('');
+
+    /* Milestone bar — animate when section scrolls into view */
+    var milestoneSection = document.querySelector('.sponsorship-section');
+    if (milestoneSection) {
+      var barObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            setTimeout(function () {
+              var bar = document.getElementById('milestoneBar');
+              if (bar) bar.style.width = '4%';
+            }, 300);
+            barObserver.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+      barObserver.observe(milestoneSection);
+    }
+  });
+
+  function toggleFaq(i) {
+    var item = document.getElementById('faq-' + i);
+    var isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(function (el) {
+      el.classList.remove('open');
+    });
+    if (!isOpen) item.classList.add('open');
+  }
+</script>
+
+</body>
+</html>

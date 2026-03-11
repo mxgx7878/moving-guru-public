@@ -89,45 +89,45 @@ function observeAll() {
 document.addEventListener('DOMContentLoaded', observeAll);
 
 
-// ─── AUTH MODAL ───
-let authMode = 'login';
+// // ─── AUTH MODAL ───
+// let authMode = 'login';
 
-function openModal(mode) {
-  authMode = mode;
-  const overlay = document.getElementById('authModal');
-  const title = document.getElementById('modalTitle');
-  const desc = document.getElementById('modalDesc');
-  const nameField = document.getElementById('nameField');
-  const submit = document.getElementById('modalSubmit');
-  const toggle = document.getElementById('modalToggle');
+// function openModal(mode) {
+//   authMode = mode;
+//   const overlay = document.getElementById('authModal');
+//   const title = document.getElementById('modalTitle');
+//   const desc = document.getElementById('modalDesc');
+//   const nameField = document.getElementById('nameField');
+//   const submit = document.getElementById('modalSubmit');
+//   const toggle = document.getElementById('modalToggle');
 
-  if (mode === 'login') {
-    title.textContent = 'Log In';
-    desc.textContent = 'Welcome back. Sign in to your Moving Guru account.';
-    nameField.style.display = 'none';
-    submit.textContent = 'Log In';
-    toggle.innerHTML = "Don't have an account? <a onclick=\"toggleAuthMode()\">Sign Up</a>";
-  } else {
-    title.textContent = 'Sign Up';
-    desc.textContent = 'Create your Moving Guru profile and start connecting.';
-    nameField.style.display = 'block';
-    submit.textContent = 'Create Account';
-    toggle.innerHTML = 'Already have an account? <a onclick="toggleAuthMode()">Log In</a>';
-  }
-  overlay.classList.add('show');
-}
+//   if (mode === 'login') {
+//     title.textContent = 'Log In';
+//     desc.textContent = 'Welcome back. Sign in to your Moving Guru account.';
+//     nameField.style.display = 'none';
+//     submit.textContent = 'Log In';
+//     toggle.innerHTML = "Don't have an account? <a onclick=\"toggleAuthMode()\">Sign Up</a>";
+//   } else {
+//     title.textContent = 'Sign Up';
+//     desc.textContent = 'Create your Moving Guru profile and start connecting.';
+//     nameField.style.display = 'block';
+//     submit.textContent = 'Create Account';
+//     toggle.innerHTML = 'Already have an account? <a onclick="toggleAuthMode()">Log In</a>';
+//   }
+//   overlay.classList.add('show');
+// }
 
-function closeModal() {
-  document.getElementById('authModal').classList.remove('show');
-}
+// function closeModal() {
+//   document.getElementById('authModal').classList.remove('show');
+// }
 
-function closeModalOutside(e) {
-  if (e.target === e.currentTarget) closeModal();
-}
+// function closeModalOutside(e) {
+//   if (e.target === e.currentTarget) closeModal();
+// }
 
-function toggleAuthMode() {
-  openModal(authMode === 'login' ? 'signup' : 'login');
-}
+// function toggleAuthMode() {
+//   openModal(authMode === 'login' ? 'signup' : 'login');
+// }
 
 
 // ─── SEARCH AUTOCOMPLETE (Home page) ───
