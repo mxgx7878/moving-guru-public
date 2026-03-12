@@ -64,7 +64,7 @@
     ` : `
       <div class="drawer-auth">
         <button class="drawer-btn-login" onclick="closeDrawerAndOpenModal('login')">Log In</button>
-        <button class="drawer-btn-signup" onclick="closeDrawerAndOpenModal('signup')">Sign Up — It's Free</button>
+        <button class="drawer-btn-signup" onclick="closeDrawerAndOpenModal('signup')">Sign Up</button>
       </div>
     `;
 
