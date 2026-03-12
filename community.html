@@ -93,7 +93,7 @@
           class="drawer-btn-signup"
           onclick="closeDrawerAndOpenModal('signup')"
         >
-          Sign Up — It's Free
+          Sign Up 
         </button>
       </div>
     </div>
@@ -130,7 +130,7 @@
     <!-- ═══════ PAGE HERO ═══════ -->
     <div class="page-hero">
       <div class="page-hero-img">
-        <img src="images/group.png" alt="Community member" />
+        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1920&q=80&auto=format" alt="Group fitness community" />
         <div class="page-hero-overlay"></div>
       </div>
       <div class="page-hero-content">
@@ -141,6 +141,43 @@
         </p>
       </div>
     </div>
+
+    <!-- ═══════ SEARCH BAR ═══════ -->
+    <section class="section" style="padding-bottom: 0;">
+      <div class="section-inner">
+        <div class="search-container" style="margin-bottom: 0;">
+          <div class="search-bar-main" id="communitySearchBar">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            <input type="text" id="communitySearchInput" placeholder="Search disciplines — Pilates, Yoga, Boxing..." oninput="handleCommunitySearch()" onfocus="handleCommunitySearch()" />
+            <button class="search-btn" onclick="filterCommunityProfiles()">Search</button>
+            <div class="search-autocomplete" id="communitySearchAC"></div>
+          </div>
+          <div class="search-filters">
+            <div class="filter-select-wrap">
+              <select class="filter-select" id="communityFilterCountry" onchange="filterCommunityProfiles()">
+                <option value="">All Countries</option>
+              </select>
+              <span class="filter-arrow">&#9662;</span>
+            </div>
+            <div class="filter-select-wrap">
+              <select class="filter-select" id="communityFilterLanguage" onchange="filterCommunityProfiles()">
+                <option value="">All Languages</option>
+              </select>
+              <span class="filter-arrow">&#9662;</span>
+            </div>
+            <div class="filter-select-wrap">
+              <select class="filter-select" id="communityFilterMonth" onchange="filterCommunityProfiles()">
+                <option value="">Any Month</option>
+              </select>
+              <span class="filter-arrow">&#9662;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- ═══════ PROFILES ═══════ -->
     <section class="section">
@@ -239,5 +276,47 @@
     <script src="js/navbar.js"></script>
     <script src="js/main.js"></script>
     <script src="js/translate.js"></script>
+    <script>
+      // Populate community search filters
+      document.addEventListener('DOMContentLoaded', function() {
+        const cSel = document.getElementById('communityFilterCountry');
+        const lSel = document.getElementById('communityFilterLanguage');
+        const mSel = document.getElementById('communityFilterMonth');
+        if (typeof COUNTRIES !== 'undefined' && cSel) {
+          COUNTRIES.sort().forEach(function(c) { var o = document.createElement('option'); o.value = c; o.textContent = c; cSel.appendChild(o); });
+        }
+        if (typeof LANGUAGES !== 'undefined' && lSel) {
+          LANGUAGES.sort().forEach(function(l) { var o = document.createElement('option'); o.value = l; o.textContent = l; lSel.appendChild(o); });
+        }
+        if (typeof MONTHS !== 'undefined' && mSel) {
+          MONTHS.forEach(function(m) { var o = document.createElement('option'); o.value = m; o.textContent = m; mSel.appendChild(o); });
+        }
+      });
+      function handleCommunitySearch() {
+        var input = document.getElementById('communitySearchInput');
+        var ac = document.getElementById('communitySearchAC');
+        if (!input || !ac) return;
+        var val = input.value.trim().toLowerCase();
+        if (val.length < 1) { ac.style.display = 'none'; return; }
+        var disciplines = ['Yoga','Pilates','Boxing','HIIT','Dance','Martial Arts','Meditation','Barre','CrossFit','Cycling','Swimming','Gymnastics','Calisthenics','Tai Chi','Capoeira','Kickboxing','Strength Training','Functional Training','Stretching','Breathwork'];
+        var matches = disciplines.filter(function(d) { return d.toLowerCase().indexOf(val) !== -1; });
+        if (matches.length === 0) { ac.style.display = 'none'; return; }
+        ac.innerHTML = matches.map(function(m) { return '<div class="search-ac-item" onclick="selectCommunityDiscipline(\'' + m + '\')">' + m + '</div>'; }).join('');
+        ac.style.display = 'block';
+      }
+      function selectCommunityDiscipline(d) {
+        document.getElementById('communitySearchInput').value = d;
+        document.getElementById('communitySearchAC').style.display = 'none';
+        filterCommunityProfiles();
+      }
+      function filterCommunityProfiles() {
+        document.getElementById('communitySearchAC') && (document.getElementById('communitySearchAC').style.display = 'none');
+      }
+      document.addEventListener('click', function(e) {
+        var ac = document.getElementById('communitySearchAC');
+        var bar = document.getElementById('communitySearchBar');
+        if (ac && bar && !bar.contains(e.target)) ac.style.display = 'none';
+      });
+    </script>
   </body>
 </html>
