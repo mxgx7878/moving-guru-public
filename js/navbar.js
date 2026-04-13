@@ -5,11 +5,13 @@
 
 (function () {
 
+  // ─── LOGIN PORTAL URL ───
+  const LOGIN_URL = 'https://moving-guru.vercel.app/login';
+
   // ─── AUTH HELPERS ───
   function getUser() {
     try { return JSON.parse(localStorage.getItem('mg_user')); } catch { return null; }
   }
-  function setUser(u) { localStorage.setItem('mg_user', JSON.stringify(u)); }
   function clearUser() { localStorage.removeItem('mg_user'); }
 
   // ─── DETECT CURRENT PAGE ───
@@ -78,7 +80,9 @@
     return `
 <!-- NAVBAR -->
 <nav class="navbar" id="navbar">
-  <a href="index.html" class="nav-logo">MOVING <em>GURU</em></a>
+  <a href="index.html" class="nav-logo">
+    <img src="images/logo.png" alt="Moving Guru" class="nav-logo-img" />
+  </a>
   <div class="nav-links">
     ${navLinksHtml}
     ${authHtml}
@@ -88,38 +92,15 @@
   </button>
 </nav>
 
-<!-- AUTH MODAL -->
-<div class="modal-overlay" id="authModal" onclick="closeModalOutside(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">&times;</button>
-    <h2 id="modalTitle">Log In</h2>
-    <p id="modalDesc">Welcome back. Sign in to your Moving Guru account.</p>
-    <div class="modal-field" id="nameField" style="display:none;">
-      <label>Full Name</label>
-      <input type="text" id="inputName" placeholder="Your name" />
-    </div>
-    <div class="modal-field">
-      <label>Email</label>
-      <input type="email" id="inputEmail" placeholder="you@email.com" />
-    </div>
-    <div class="modal-field">
-      <label>Password</label>
-      <input type="password" id="inputPassword" placeholder="Your password" />
-    </div>
-    <button class="modal-submit" id="modalSubmit" onclick="handleAuthSubmit()">Log In</button>
-    <div class="modal-toggle" id="modalToggle">
-      Don't have an account? <a onclick="toggleAuthMode()">Sign Up</a>
-    </div>
-  </div>
-</div>
-
 <!-- DRAWER OVERLAY -->
 <div class="drawer-overlay" id="drawerOverlay"></div>
 
 <!-- MOBILE DRAWER -->
 <div class="mobile-drawer" id="mobileDrawer">
   <div class="drawer-header">
-    <span class="drawer-logo">MOVING <em>GURU</em></span>
+    <span class="drawer-logo">
+      <img src="images/logo.png" alt="Moving Guru" class="drawer-logo-img" />
+    </span>
     <button class="drawer-close" id="drawerClose">&times;</button>
   </div>
   <nav class="drawer-nav">
@@ -243,72 +224,20 @@
     if (dd) dd.classList.remove('open');
   }
 
-  // ─── AUTH MODAL ───
-  let authMode = 'login';
-
-  window.openModal = function (mode) {
-    authMode = mode;
-    const overlay = document.getElementById('authModal');
-    const title = document.getElementById('modalTitle');
-    const desc = document.getElementById('modalDesc');
-    const nameField = document.getElementById('nameField');
-    const submit = document.getElementById('modalSubmit');
-    const toggle = document.getElementById('modalToggle');
-    if (!overlay) return;
-
-    if (mode === 'login') {
-      title.textContent = 'Log In';
-      desc.textContent = 'Welcome back. Sign in to your Moving Guru account.';
-      nameField.style.display = 'none';
-      submit.textContent = 'Log In';
-      toggle.innerHTML = "Don't have an account? <a onclick=\"toggleAuthMode()\">Sign Up</a>";
-    } else {
-      title.textContent = 'Sign Up';
-      desc.textContent = 'Create your Moving Guru profile and start connecting.';
-      nameField.style.display = 'block';
-      submit.textContent = 'Create Account';
-      toggle.innerHTML = 'Already have an account? <a onclick="toggleAuthMode()">Log In</a>';
-    }
-    overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
+  // ─── AUTH: REDIRECT TO PORTAL LOGIN ───
+  // Login/Signup ab HTML side par nahi hota — sab portal par hota hai.
+  // Har login/signup trigger seedha portal ki login URL par redirect karta hai.
+  window.openModal = function () {
+    window.location.href = LOGIN_URL;
   };
 
-  window.closeModal = function () {
-    const el = document.getElementById('authModal');
-    if (el) el.classList.remove('show');
-    document.body.style.overflow = '';
-  };
-
-  window.closeModalOutside = function (e) {
-    if (e.target === e.currentTarget) window.closeModal();
-  };
-
+  window.closeModal = function () {};
+  window.closeModalOutside = function () {};
   window.toggleAuthMode = function () {
-    window.openModal(authMode === 'login' ? 'signup' : 'login');
+    window.location.href = LOGIN_URL;
   };
-
-  // Handle submit — save user, rebuild navbar
   window.handleAuthSubmit = function () {
-    const email = document.getElementById('inputEmail')?.value?.trim();
-    const password = document.getElementById('inputPassword')?.value;
-    const nameInput = document.getElementById('inputName');
-
-    if (!email || !password) return;
-
-    let name = '';
-    if (authMode === 'signup') {
-      name = nameInput?.value?.trim();
-      if (!name) { nameInput.focus(); return; }
-    } else {
-      // For demo: use email prefix as name if no stored user
-      const existing = getUser();
-      name = existing?.name || email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    }
-
-    setUser({ name, email });
-    window.closeModal();
-    // Rebuild navbar with logged-in state
-    rebuildNavbar();
+    window.location.href = LOGIN_URL;
   };
 
   // ─── LOGOUT ───
@@ -317,21 +246,20 @@
     rebuildNavbar();
   };
 
-  // ─── CLOSE DRAWER & OPEN MODAL ───
-  window.closeDrawerAndOpenModal = function (mode) {
+  // ─── CLOSE DRAWER & REDIRECT TO PORTAL ───
+  window.closeDrawerAndOpenModal = function () {
     if (window._closeDrawer) window._closeDrawer();
-    setTimeout(() => window.openModal(mode), 200);
+    window.location.href = LOGIN_URL;
   };
 
-  // ─── REBUILD NAVBAR (after login/logout) ───
+  // ─── REBUILD NAVBAR (after logout) ───
   function rebuildNavbar() {
     const nav = document.getElementById('navbar');
-    const authModal = document.getElementById('authModal');
     const drawerOverlay = document.getElementById('drawerOverlay');
     const mobileDrawer = document.getElementById('mobileDrawer');
 
     // Remove old navbar elements
-    [nav, authModal, drawerOverlay, mobileDrawer].forEach(el => { if (el) el.remove(); });
+    [nav, drawerOverlay, mobileDrawer].forEach(el => { if (el) el.remove(); });
 
     // Re-inject
     const temp = document.createElement('div');

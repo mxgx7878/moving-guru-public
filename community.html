@@ -13,7 +13,9 @@
   <body>
     <!-- ═══════ NAVBAR ═══════ -->
     <nav class="navbar" id="navbar">
-      <a href="index.html" class="nav-logo">MOVING <em>GURU</em></a>
+      <a href="index.html" class="nav-logo">
+        <img src="images/logo.png" alt="Moving Guru" class="nav-logo-img" />
+      </a>
       <div class="nav-links">
         <a href="index.html" class="nav-link" data-page="home">Home</a>
         <a href="how-it-works.html" class="nav-link" data-page="how-it-works"
@@ -41,7 +43,9 @@
     <!-- MOBILE DRAWER -->
     <div class="mobile-drawer" id="mobileDrawer">
       <div class="drawer-header">
-        <span class="drawer-logo">MOVING <em>GURU</em></span>
+        <span class="drawer-logo">
+          <img src="images/logo.png" alt="Moving Guru" class="drawer-logo-img" />
+        </span>
         <button
           class="drawer-close"
           onclick="
@@ -95,35 +99,6 @@
         >
           Sign Up — It's Free
         </button>
-      </div>
-    </div>
-
-    <!-- ═══════ AUTH MODAL ═══════ -->
-    <div
-      class="modal-overlay"
-      id="authModal"
-      onclick="closeModalOutside(event)"
-    >
-      <div class="modal">
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-        <h2 id="modalTitle">Log In</h2>
-        <p id="modalDesc">Welcome back. Sign in to your Moving Guru account.</p>
-        <div class="modal-field" id="nameField" style="display: none">
-          <label>Full Name</label>
-          <input type="text" placeholder="Your name" />
-        </div>
-        <div class="modal-field">
-          <label>Email</label>
-          <input type="email" placeholder="you@email.com" />
-        </div>
-        <div class="modal-field">
-          <label>Password</label>
-          <input type="password" placeholder="Your password" />
-        </div>
-        <button class="modal-submit" id="modalSubmit">Log In</button>
-        <div class="modal-toggle" id="modalToggle">
-          Don't have an account? <a onclick="toggleAuthMode()">Sign Up</a>
-        </div>
       </div>
     </div>
 
