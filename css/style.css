@@ -119,12 +119,12 @@ button { font-family: 'DM Sans', sans-serif; }
 }
 .nav-logo em { font-style: normal; color: var(--lime-dark); }
 .nav-logo-img {
-  height: 38px;
+  height: 60px;
   width: auto;
   display: block;
   object-fit: contain;
 }
-.navbar.scrolled .nav-logo-img { height: 34px; }
+.navbar.scrolled .nav-logo-img { height: 50px; }
 .nav-links { display: flex; align-items: center; gap: 6px; }
 .nav-link {
   color: var(--text-mid); font-size: 13.5px; font-weight: 500;
