@@ -244,9 +244,7 @@
       </select>
       <select class="grow-filter-select" id="growDisc">
         <option value="">All Disciplines</option>
-        <option>Yoga</option><option>Pilates</option><option>Martial Arts</option>
-        <option>Dance</option><option>Breathwork</option><option>Meditation</option>
-        <option>Mixed / Multi-Discipline</option>
+        <!-- Options injected by js/main.js → populateDisciplineSelect() -->
       </select>
       <select class="grow-filter-select" id="growType">
         <option value="">All Types</option>
@@ -339,16 +337,9 @@
         </div>
         <div class="grow-form-field">
           <label>Discipline</label>
-          <select required>
+          <select id="growFormDisc" required>
             <option value="" disabled selected>Select discipline</option>
-            <option>Yoga</option>
-            <option>Pilates</option>
-            <option>Martial Arts</option>
-            <option>Dance</option>
-            <option>Breathwork</option>
-            <option>Meditation</option>
-            <option>Mixed / Multi-Discipline</option>
-            <option>Other</option>
+            <!-- Options injected by js/main.js → populateDisciplineSelect() -->
           </select>
         </div>
       </div>
