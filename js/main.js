@@ -2,6 +2,13 @@
    MOVING GURU — Shared JavaScript
    ═══════════════════════════════════════════════ */
 
+// ─── API CONFIG ───
+// Same backend the React portal talks to. The instructors / grow-posts /
+// plans endpoints are all publicly accessible (no auth header needed).
+// See routes/api.php — these routes sit above the auth:sanctum group.
+const API_BASE = 'https://demowebportals.com/moving-guru-backend/public/api';
+
+
 // ─── DATA ───
 // NOTE: This list is the single source of truth for the public
 // marketing site. It MUST stay in sync with src/data/disciplines.js
@@ -58,21 +65,15 @@ const DISCIPLINES = [
 
 const ALL_DISCIPLINES = DISCIPLINES.flatMap(d => d.items.map(item => ({ name: item, category: d.category })));
 
-const PROFILES = [
-  { name: "Bambi R.", from: "Sydney, Australia", to: "South America & Italy", discipline: "Reformer Pilates", languages: "English", availability: "Aug\u2013Dec 2026", openTo: "Swap or Direct", initials: "BR" },
-  { name: "Mateo C.", from: "Berlin, Germany", to: "Flexible", discipline: "Mat & Reformer Pilates, Vinyasa", languages: "Spanish, German, English", availability: "Open", openTo: "Swap or Direct", initials: "MC" },
-  { name: "Hnia.", from: "Melbourne, Australia", to: "India", discipline: "Reformer, Breathwork, PT", languages: "English, German, Arabic", availability: "Feb\u2013Apr 2027", openTo: "Swap or Direct", initials: "H" },
-  { name: "Studio Mouvoir", from: "Sydney, Australia", to: "Studio-Based", discipline: "Mat Pilates, Reformer Pilates", languages: "English, Spanish", availability: "December 2026", openTo: "Direct", initials: "SM" },
-];
+// Reverse lookup: discipline name → category. Used by the community
+// page to filter instructors by category client-side (the API filters
+// by individual discipline only).
+const DISCIPLINE_TO_CATEGORY = (() => {
+  const m = {};
+  DISCIPLINES.forEach(cat => cat.items.forEach(item => { m[item] = cat.category; }));
+  return m;
+})();
 
-const GROW_EVENTS = [
-  { type: "Training", date: "November 2026", month: "November", country: "Thailand", title: "Imagine Studios Thailand \u2014 500h Pilates Teacher Training", location: "Koh Samui, Thailand", desc: "Internationally accredited immersive Pilates training. Blend classical foundations with contemporary movement, anatomy, and intelligent cueing.", tag: "Internationally Accredited", disc: "Pilates" },
-  { type: "Retreat", date: "March 2027", month: "March", country: "Indonesia", title: "Bali Soul Flow \u2014 10 Day Yoga Immersion", location: "Ubud, Bali", desc: "Reconnect with your practice in the heart of Bali. Daily yoga, meditation, breathwork, and cultural excursions.", tag: "Limited Spots", disc: "Yoga" },
-  { type: "Event", date: "July 2026", month: "July", country: "Germany", title: "Movement Festival Europe \u2014 Berlin Edition", location: "Berlin, Germany", desc: "3 days of workshops, masterclasses, and networking across dance, yoga, martial arts, and beyond.", tag: "Community Event", disc: "Mixed / Multi-Discipline" },
-  { type: "Training", date: "September 2026", month: "September", country: "India", title: "Rishikesh Ashtanga Intensive \u2014 200h YTT", location: "Rishikesh, India", desc: "Traditional Ashtanga Yoga teacher training in the yoga capital of the world. Mysore style, pranayama, and philosophy.", tag: "Yoga Alliance Certified", disc: "Yoga" },
-  { type: "Retreat", date: "January 2027", month: "January", country: "Costa Rica", title: "Jungle Breathwork & Movement Retreat", location: "Nosara, Costa Rica", desc: "7 days of breathwork, functional movement, and nature immersion in the Costa Rican jungle.", tag: "All Levels Welcome", disc: "Breathwork" },
-  { type: "Training", date: "May 2026", month: "May", country: "Australia", title: "Boxing Coaching Certification \u2014 Sydney", location: "Sydney, Australia", desc: "Become a certified boxing coach. Pad work, technique, class programming, and business skills for fitness professionals.", tag: "Industry Recognised", disc: "Martial Arts" },
-];
 
 const COUNTRIES = [
 "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan",
@@ -104,6 +105,22 @@ const LANGUAGES = ["English", "Spanish", "German", "French", "Portuguese", "Japa
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 
+// ─── HELPERS ───
+function escapeHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function escapeAttr(s) {
+  // Safe to embed inside a single-quoted onclick attribute.
+  return String(s ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+
 // ─── NAVBAR SCROLL ───
 window.addEventListener("scroll", () => {
   const nav = document.getElementById("navbar");
@@ -132,47 +149,6 @@ function observeAll() {
 document.addEventListener('DOMContentLoaded', observeAll);
 
 
-// // ─── AUTH MODAL ───
-// let authMode = 'login';
-
-// function openModal(mode) {
-//   authMode = mode;
-//   const overlay = document.getElementById('authModal');
-//   const title = document.getElementById('modalTitle');
-//   const desc = document.getElementById('modalDesc');
-//   const nameField = document.getElementById('nameField');
-//   const submit = document.getElementById('modalSubmit');
-//   const toggle = document.getElementById('modalToggle');
-
-//   if (mode === 'login') {
-//     title.textContent = 'Log In';
-//     desc.textContent = 'Welcome back. Sign in to your Moving Guru account.';
-//     nameField.style.display = 'none';
-//     submit.textContent = 'Log In';
-//     toggle.innerHTML = "Don't have an account? <a onclick=\"toggleAuthMode()\">Sign Up</a>";
-//   } else {
-//     title.textContent = 'Sign Up';
-//     desc.textContent = 'Create your Moving Guru profile and start connecting.';
-//     nameField.style.display = 'block';
-//     submit.textContent = 'Create Account';
-//     toggle.innerHTML = 'Already have an account? <a onclick="toggleAuthMode()">Log In</a>';
-//   }
-//   overlay.classList.add('show');
-// }
-
-// function closeModal() {
-//   document.getElementById('authModal').classList.remove('show');
-// }
-
-// function closeModalOutside(e) {
-//   if (e.target === e.currentTarget) closeModal();
-// }
-
-// function toggleAuthMode() {
-//   openModal(authMode === 'login' ? 'signup' : 'login');
-// }
-
-
 // ─── SEARCH AUTOCOMPLETE (Home page) ───
 function handleSearchInput() {
   const input = document.getElementById('searchInput');
@@ -186,7 +162,7 @@ function handleSearchInput() {
   if (!matches.length) { ac.classList.remove('show'); return; }
 
   ac.innerHTML = matches.map(m =>
-    `<div class="autocomplete-item" onclick="selectDiscipline('${m.name}')">${m.name} <span class="ac-cat">${m.category}</span></div>`
+    `<div class="autocomplete-item" onclick="selectDiscipline('${escapeAttr(m.name)}')">${escapeHtml(m.name)} <span class="ac-cat">${escapeHtml(m.category)}</span></div>`
   ).join('');
   ac.classList.add('show');
 }
@@ -233,7 +209,6 @@ function populateDisciplineSelect(id) {
   const sel = document.getElementById(id);
   if (!sel) return;
 
-  // Preserve the first option (placeholder) if present, drop everything else.
   const placeholder = sel.querySelector('option');
   sel.innerHTML = '';
   if (placeholder) sel.appendChild(placeholder);
@@ -261,10 +236,10 @@ function renderDisc() {
   if (!tabsEl || !itemsEl) return;
 
   tabsEl.innerHTML = DISCIPLINES.map((d, i) =>
-    `<button class="disc-tab${i === activeDisc ? ' active' : ''}" onclick="setDisc(${i})">${d.category}</button>`
+    `<button class="disc-tab${i === activeDisc ? ' active' : ''}" onclick="setDisc(${i})">${escapeHtml(d.category)}</button>`
   ).join('');
   itemsEl.innerHTML = DISCIPLINES[activeDisc].items.map((item, i) =>
-    `<div class="disc-item" style="animation-delay:${i * 0.04}s">${item}</div>`
+    `<div class="disc-item" style="animation-delay:${i * 0.04}s">${escapeHtml(item)}</div>`
   ).join('');
 }
 
@@ -290,107 +265,549 @@ function initHeroDots() {
 document.addEventListener('DOMContentLoaded', initHeroDots);
 
 
-// ─── COMMUNITY PAGE ───
-function initCommunity() {
-  const filterEl = document.getElementById('communityDiscFilter');
-  const grid = document.getElementById('communityGrid');
+// ═══════════════════════════════════════════════
+//  COMMUNITY PAGE — live data from the API
+// ═══════════════════════════════════════════════
+//
+// Hits GET /api/instructors, maps each instructor to the existing
+// community-card shape, and renders the grid.
+//
+// Two-level filter (mirrors the homepage discTabs/discItems pattern):
+//   Row 1 — "All" + 10 category tabs
+//   Row 2 — individual discipline chips for whichever category is active
+
+let communityProfiles  = [];
+let activeCommunityCat  = null; // category name | null = "All"
+let activeCommunityDisc = null; // specific discipline | null = "all in active cat / everything"
+
+function communityGridEl()   { return document.getElementById('communityGrid');       }
+function communityFilterEl() { return document.getElementById('communityDiscFilter'); }
+
+/**
+ * Inject the community-chip stylesheet once (so we don't have to edit
+ * css/style.css to ship the two-row filter).
+ */
+function ensureCommunityChipStyles() {
+  if (document.getElementById('community-chip-styles')) return;
+  const s = document.createElement('style');
+  s.id = 'community-chip-styles';
+  s.textContent = `
+    .community-chip {
+      padding: 7px 14px; border-radius: var(--radius-pill); cursor: pointer;
+      border: 1px solid var(--border); background: var(--white);
+      color: var(--text-mid); font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 600; transition: all 0.2s;
+      letter-spacing: 0.2px;
+    }
+    .community-chip:hover { border-color: var(--text-light); color: var(--text); }
+    .community-chip.active {
+      border-color: var(--lime-dark);
+      background: var(--lime-soft);
+      color: var(--lime-dark);
+    }
+  `;
+  document.head.appendChild(s);
+}
+
+
+async function initCommunity() {
+  const filterEl = communityFilterEl();
+  const grid = communityGridEl();
   if (!filterEl || !grid) return;
 
-  filterEl.innerHTML = '<button class="disc-tab active" onclick="filterCommunity(null, this)">All</button>' +
-    DISCIPLINES.map(d =>
-      `<button class="disc-tab" onclick="filterCommunity('${d.category}', this)">${d.category}</button>`
-    ).join('');
+  ensureCommunityChipStyles();
 
-  renderProfiles(PROFILES);
-}
+  // The wrapper div has class "disc-tabs" (flex row) baked in by the page
+  // markup. Our two-row content needs block stacking — override here.
+  filterEl.style.display = 'block';
+  filterEl.style.flexWrap = '';
+  filterEl.style.gap = '';
 
-function filterCommunity(cat, btn) {
-  document.querySelectorAll('#communityDiscFilter .disc-tab').forEach(t => t.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderProfiles(PROFILES);
-}
+  renderCommunityFilters();
 
-function renderProfiles(profiles) {
-  const grid = document.getElementById('communityGrid');
-  if (!grid) return;
+  grid.innerHTML = communityMessage('Loading instructors…');
 
-  grid.innerHTML = profiles.map((p, i) => `
-    <div class="profile-card reveal reveal-d${Math.min(i + 1, 4)}">
-      <div class="profile-stripe"></div>
-      <div class="profile-header">
-        <div class="profile-avatar">${p.initials}</div>
-        <div>
-          <h3>${p.name}</h3>
-          <p>${p.from}</p>
-        </div>
-      </div>
-      <div class="profile-info">
-        <div class="info-row"><span class="info-label">Discipline</span><span class="info-value">${p.discipline}</span></div>
-        <div class="info-row"><span class="info-label">Travelling To</span><span class="info-value">${p.to}</span></div>
-        <div class="info-row"><span class="info-label">Languages</span><span class="info-value">${p.languages}</span></div>
-        <div class="info-row"><span class="info-label">Available</span><span class="info-value">${p.availability}</span></div>
-        <div class="info-row"><span class="info-label">Open To</span><span class="info-value">${p.openTo}</span></div>
-      </div>
-      <button onclick="openModal('signup');return false;" class="profile-btn">View Details</button>
-    </div>
-  `).join('');
-  setTimeout(observeAll, 50);
+  try {
+    const res = await fetch(`${API_BASE}/instructors?active_only=true&per_page=50`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    if (!json || json.success === false) {
+      throw new Error(json?.message || 'Request failed');
+    }
+    const list = json?.data?.instructors ?? [];
+    communityProfiles = list.map(toCommunityProfile);
+  } catch (err) {
+    console.error('Failed to load instructors:', err);
+    grid.innerHTML = communityMessage(
+      "Couldn't load instructors right now. Please refresh the page or try again later.",
+      'error'
+    );
+    return;
+  }
+
+  renderProfiles(getFilteredCommunityProfiles());
 }
 
 document.addEventListener('DOMContentLoaded', initCommunity);
 
 
-// ─── GROW PAGE ───
-function renderGrowEvents() {
-  const countryEl = document.getElementById('growCountry');
-  const monthEl = document.getElementById('growMonth');
-  const discEl = document.getElementById('growDisc');
-  const typeEl = document.getElementById('growType');
-  const grid = document.getElementById('growGrid');
+function renderCommunityFilters() {
+  const filterEl = communityFilterEl();
+  if (!filterEl) return;
+
+  const catRow = `
+    <div class="disc-tabs" style="margin-bottom:14px;">
+      <button class="disc-tab${activeCommunityCat === null ? ' active' : ''}"
+        onclick="setCommunityCategory(null)">All</button>
+      ${DISCIPLINES.map(c => `
+        <button class="disc-tab${activeCommunityCat === c.category ? ' active' : ''}"
+          onclick="setCommunityCategory('${escapeAttr(c.category)}')">${escapeHtml(c.category)}</button>
+      `).join('')}
+    </div>
+  `;
+
+  let discRow = '';
+  if (activeCommunityCat) {
+    const cat = DISCIPLINES.find(c => c.category === activeCommunityCat);
+    if (cat) {
+      const chip = (label, value, isActive) => `
+        <button class="community-chip${isActive ? ' active' : ''}"
+          onclick="setCommunityDiscipline(${value === null ? 'null' : `'${escapeAttr(value)}'`})">${escapeHtml(label)}</button>
+      `;
+      discRow = `
+        <div class="community-discipline-row" style="display:flex;flex-wrap:wrap;gap:8px;padding-top:14px;border-top:1px dashed var(--border);">
+          ${chip(`All ${cat.category}`, null, activeCommunityDisc === null)}
+          ${cat.items.map(d => chip(d, d, activeCommunityDisc === d)).join('')}
+        </div>
+      `;
+    }
+  }
+
+  filterEl.innerHTML = catRow + discRow;
+}
+
+function setCommunityCategory(cat) {
+  activeCommunityCat = cat || null;
+  activeCommunityDisc = null;
+  renderCommunityFilters();
+  renderProfiles(getFilteredCommunityProfiles());
+}
+
+function setCommunityDiscipline(disc) {
+  activeCommunityDisc = disc || null;
+  renderCommunityFilters();
+  renderProfiles(getFilteredCommunityProfiles());
+}
+
+function getFilteredCommunityProfiles() {
+  if (activeCommunityDisc) {
+    return communityProfiles.filter(p =>
+      (p.disciplines || []).includes(activeCommunityDisc));
+  }
+  if (activeCommunityCat) {
+    return communityProfiles.filter(p =>
+      (p.disciplines || []).some(d => DISCIPLINE_TO_CATEGORY[d] === activeCommunityCat));
+  }
+  return communityProfiles;
+}
+
+
+function toCommunityProfile(inst) {
+  const d = inst?.detail || {};
+  const disciplines = Array.isArray(d.disciplines) ? d.disciplines : [];
+  const languages   = Array.isArray(d.languages)   ? d.languages   : [];
+  const openTo      = Array.isArray(d.openTo)      ? d.openTo      : [];
+
+  const from = d.countryFrom || d.location || '—';
+  const to   = d.travelingTo || 'Flexible';
+
+  const availability = d.availability
+    || formatAvailabilityRange(d.availableFrom, d.availableTo)
+    || 'Open';
+
+  const initials = (inst?.name || '?')
+    .split(/\s+/).filter(Boolean).slice(0, 2)
+    .map(p => p[0].toUpperCase()).join('') || '?';
+
+  return {
+    id:           inst?.id,
+    name:         inst?.name || 'Anonymous',
+    from,
+    to,
+    disciplines,
+    disciplineLabel: disciplines.length
+      ? disciplines.slice(0, 3).join(', ') + (disciplines.length > 3 ? '…' : '')
+      : '—',
+    languages:    languages.length ? languages.join(', ') : '—',
+    availability,
+    openTo:       openTo.length ? openTo.join(' or ') : 'Open',
+    initials,
+    profilePic:   d.profile_picture_url || d.profile_picture || null,
+  };
+}
+
+function formatAvailabilityRange(from, to) {
+  if (!from && !to) return null;
+  if (from && to)   return `${from} – ${to}`;
+  return from || to;
+}
+
+
+function renderProfiles(profiles) {
+  const grid = communityGridEl();
   if (!grid) return;
 
-  const country = countryEl ? countryEl.value : '';
-  const month = monthEl ? monthEl.value : '';
-  const disc = discEl ? discEl.value : '';
-  const type = typeEl ? typeEl.value : '';
-
-  let events = GROW_EVENTS.filter(e => {
-    if (country && e.country !== country) return false;
-    if (month && e.month !== month) return false;
-    if (disc && e.disc !== disc) return false;
-    if (type && e.type !== type) return false;
-    return true;
-  });
-
-  if (!events.length) {
-    grid.innerHTML = '<p style="color:var(--text-light);font-size:15px;padding:40px 0;">No events match your filters. Try adjusting your search.</p>';
+  if (!profiles.length) {
+    const emptyLabel = activeCommunityDisc
+      ? `No instructors found for ${activeCommunityDisc}.`
+      : activeCommunityCat
+        ? `No instructors found for ${activeCommunityCat}.`
+        : 'No instructors are currently active.';
+    grid.innerHTML = communityMessage(emptyLabel);
     return;
   }
 
-  grid.innerHTML = events.map((e, i) => `
+  grid.innerHTML = profiles.map((p, i) => {
+    const avatar = p.profilePic
+      ? `<div class="profile-avatar" style="background-image:url('${escapeAttr(p.profilePic)}');background-size:cover;background-position:center;color:transparent;">${escapeHtml(p.initials)}</div>`
+      : `<div class="profile-avatar">${escapeHtml(p.initials)}</div>`;
+
+    return `
+    <div class="profile-card reveal reveal-d${Math.min(i + 1, 4)}">
+      <div class="profile-stripe"></div>
+      <div class="profile-header">
+        ${avatar}
+        <div>
+          <h3>${escapeHtml(p.name)}</h3>
+          <p>${escapeHtml(p.from)}</p>
+        </div>
+      </div>
+      <div class="profile-info">
+        <div class="info-row"><span class="info-label">Discipline</span><span class="info-value">${escapeHtml(p.disciplineLabel)}</span></div>
+        <div class="info-row"><span class="info-label">Travelling To</span><span class="info-value">${escapeHtml(p.to)}</span></div>
+        <div class="info-row"><span class="info-label">Languages</span><span class="info-value">${escapeHtml(p.languages)}</span></div>
+        <div class="info-row"><span class="info-label">Available</span><span class="info-value">${escapeHtml(p.availability)}</span></div>
+        <div class="info-row"><span class="info-label">Open To</span><span class="info-value">${escapeHtml(p.openTo)}</span></div>
+      </div>
+      <button onclick="openModal('signup');return false;" class="profile-btn">View Details</button>
+    </div>
+    `;
+  }).join('');
+
+  setTimeout(observeAll, 50);
+}
+
+function communityMessage(text, kind = 'info') {
+  const color = kind === 'error' ? 'var(--coral)' : 'var(--text-light)';
+  return `<p style="grid-column:1/-1;text-align:center;color:${color};font-size:15px;padding:40px 0;">${escapeHtml(text)}</p>`;
+}
+
+
+// ═══════════════════════════════════════════════
+//  GROW PAGE — live data from the API
+// ═══════════════════════════════════════════════
+//
+// Replaces the old hardcoded GROW_EVENTS array. Hits GET /api/grow-posts,
+// then filters client-side based on the four selects (country / month /
+// discipline / type). Client-side filtering keeps the UI snappy on
+// small datasets and means changing a filter doesn't trigger a refetch.
+
+let growPosts = [];
+
+function growGridEl() { return document.getElementById('growGrid'); }
+
+async function initGrow() {
+  const grid = growGridEl();
+  if (!grid) return;
+
+  // Wire up filter change listeners
+  ['growCountry', 'growMonth', 'growDisc', 'growType'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', renderGrowEvents);
+  });
+
+  grid.innerHTML = growMessage('Loading opportunities…');
+
+  try {
+    const res = await fetch(`${API_BASE}/grow-posts?per_page=50`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    if (!json || json.success === false) {
+      throw new Error(json?.message || 'Request failed');
+    }
+
+    // /api/grow-posts returns posts as an array directly under .data
+    // (unlike the wrapped {posts:[...]} shape used elsewhere).
+    const list = Array.isArray(json?.data) ? json.data : [];
+    growPosts = list.map(toGrowEvent);
+  } catch (err) {
+    console.error('Failed to load grow posts:', err);
+    grid.innerHTML = growMessage(
+      "Couldn't load opportunities right now. Please refresh the page or try again later.",
+      'error'
+    );
+    return;
+  }
+
+  renderGrowEvents();
+}
+
+document.addEventListener('DOMContentLoaded', initGrow);
+
+
+/**
+ * Map a GrowPost API record to the lean shape the Grow card expects.
+ */
+function toGrowEvent(p) {
+  const dateLabel  = formatGrowDateLabel(p?.date_from, p?.date_to);
+  const monthName  = monthFromDate(p?.date_from);
+  const country    = countryFromLocation(p?.location);
+  const typeLabel  = capitalize(p?.type || 'Event');
+  const tag        = pickTag(p);
+  const disciplineNames = Array.isArray(p?.disciplines) ? p.disciplines : [];
+  const cover      = Array.isArray(p?.images) && p.images[0] ? p.images[0] : null;
+
+  return {
+    id:        p?.id,
+    type:      typeLabel,
+    typeRaw:   p?.type,
+    date:      dateLabel || 'TBA',
+    month:     monthName,
+    country,
+    location:  p?.location || '',
+    title:     p?.title || 'Untitled',
+    desc:      p?.description || '',
+    tag,
+    disciplines: disciplineNames,
+    cover,
+    externalUrl: p?.external_url || null,
+    isFeatured:  !!p?.is_featured,
+  };
+}
+
+/** "Nov 2026" or "Nov 6 – Nov 13, 2026" depending on whether ranges differ. */
+function formatGrowDateLabel(from, to) {
+  if (!from) return null;
+  const opts = { month: 'short', day: 'numeric', year: 'numeric' };
+  const f = new Date(from);
+  if (isNaN(f.getTime())) return null;
+  if (!to) return f.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const t = new Date(to);
+  if (isNaN(t.getTime())) return f.toLocaleDateString('en-US', opts);
+  if (f.getMonth() === t.getMonth() && f.getFullYear() === t.getFullYear()) {
+    return f.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }
+  return `${f.toLocaleDateString('en-US', opts)} – ${t.toLocaleDateString('en-US', opts)}`;
+}
+
+function monthFromDate(d) {
+  if (!d) return '';
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return '';
+  return MONTHS[date.getMonth()] || '';
+}
+
+/** "Koh Samui, Thailand" → "Thailand". Returns last comma-separated part. */
+function countryFromLocation(loc) {
+  if (!loc) return '';
+  const parts = String(loc).split(',').map(s => s.trim()).filter(Boolean);
+  return parts.length ? parts[parts.length - 1] : '';
+}
+
+/** Pick a single tag to show on the card — first explicit tag wins, then falls back. */
+function pickTag(p) {
+  if (Array.isArray(p?.tags) && p.tags.length) return p.tags[0];
+  if (p?.is_featured) return 'Featured';
+  if (p?.spots_left === 0) return 'Sold Out';
+  if (typeof p?.spots_left === 'number' && p.spots_left <= 5) return 'Almost Full';
+  return '';
+}
+
+function capitalize(s) {
+  s = String(s || '');
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+
+function renderGrowEvents() {
+  const grid = growGridEl();
+  if (!grid) return;
+
+  const country = document.getElementById('growCountry')?.value || '';
+  const month   = document.getElementById('growMonth')?.value   || '';
+  const disc    = document.getElementById('growDisc')?.value    || '';
+  const type    = document.getElementById('growType')?.value    || '';
+
+  const filtered = growPosts.filter(e => {
+    if (country && e.country !== country) return false;
+    if (month   && e.month   !== month)   return false;
+    if (disc    && !e.disciplines.includes(disc)) return false;
+    if (type    && e.typeRaw !== type.toLowerCase()) return false;
+    return true;
+  });
+
+  if (!filtered.length) {
+    grid.innerHTML = growMessage(
+      growPosts.length === 0
+        ? 'No opportunities posted yet. Check back soon.'
+        : 'No events match your filters. Try adjusting your search.'
+    );
+    return;
+  }
+
+  grid.innerHTML = filtered.map((e, i) => `
     <div class="grow-card reveal reveal-d${Math.min(i + 1, 4)}">
       <div class="grow-card-head">
-        <span class="grow-type">${e.type}</span>
-        <span class="grow-date">${e.date}</span>
+        <span class="grow-type">${escapeHtml(e.type)}</span>
+        <span class="grow-date">${escapeHtml(e.date)}</span>
       </div>
-      <h3>${e.title}</h3>
-      <p class="grow-location">${e.location}</p>
-      <p>${e.desc}</p>
+      <h3>${escapeHtml(e.title)}</h3>
+      <p class="grow-location">${escapeHtml(e.location)}</p>
+      <p>${escapeHtml(e.desc)}</p>
       <div class="grow-card-foot">
-        <span class="grow-tag">${e.tag}</span>
-        <button class="grow-btn">More Info</button>
+        <span class="grow-tag">${escapeHtml(e.tag)}</span>
+        ${e.externalUrl
+          ? `<a class="grow-btn" href="${escapeAttr(e.externalUrl)}" target="_blank" rel="noopener noreferrer">More Info</a>`
+          : `<button class="grow-btn" onclick="openModal('signup');return false;">More Info</button>`}
       </div>
     </div>
   `).join('');
   setTimeout(observeAll, 50);
 }
 
-function initGrow() {
-  ['growCountry', 'growMonth', 'growDisc', 'growType'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('change', renderGrowEvents);
-  });
-  renderGrowEvents();
+function growMessage(text, kind = 'info') {
+  const color = kind === 'error' ? 'var(--coral)' : 'var(--text-light)';
+  return `<p style="grid-column:1/-1;text-align:center;color:${color};font-size:15px;padding:40px 0;">${escapeHtml(text)}</p>`;
 }
 
-document.addEventListener('DOMContentLoaded', initGrow);
+
+// ═══════════════════════════════════════════════
+//  PRICING PAGE — live plans from the API
+// ═══════════════════════════════════════════════
+//
+// Replaces the three hardcoded plan cards on pricing.html. Hits
+// GET /api/plans (publicly accessible via routes/api.php) and renders
+// the response into the existing .plans-grid container. The page's
+// .plan-card / .plan-features / .plan-cta CSS classes do all the
+// styling — we just produce the same DOM shape.
+//
+// Targeting .plans-grid via querySelector means no edit to pricing.html
+// is needed.
+
+async function initPricing() {
+  const grid = document.querySelector('.plans-grid');
+  if (!grid) return;
+
+  grid.innerHTML = pricingMessage('Loading plans…');
+
+  let plans = [];
+  try {
+    const res = await fetch(`${API_BASE}/plans`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    if (!json || json.success === false) {
+      throw new Error(json?.message || 'Request failed');
+    }
+    plans = Array.isArray(json?.data?.plans) ? json.data.plans : [];
+  } catch (err) {
+    console.error('Failed to load plans:', err);
+    grid.innerHTML = pricingMessage(
+      "Couldn't load pricing right now. Please refresh the page or try again later.",
+      'error'
+    );
+    return;
+  }
+
+  if (!plans.length) {
+    grid.innerHTML = pricingMessage('No plans are currently available.');
+    return;
+  }
+
+  // Sort: featured first, then by sortOrder, then by price.
+  plans.sort((a, b) => {
+    if (!!b.isFeatured - !!a.isFeatured) return !!b.isFeatured - !!a.isFeatured;
+    const so = (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0);
+    if (so) return so;
+    return (Number(a.price) || 0) - (Number(b.price) || 0);
+  });
+
+  grid.innerHTML = plans.map((plan, i) => renderPlanCard(plan, i)).join('');
+  setTimeout(observeAll, 50);
+}
+
+document.addEventListener('DOMContentLoaded', initPricing);
+
+
+function renderPlanCard(plan, idx) {
+  const isFeatured = !!plan.isFeatured;
+  const currencySym = currencySymbol(plan.currency || 'USD');
+  const priceWhole = formatPriceWhole(plan.price);
+  const periodLabel = formatPlanPeriod(plan);
+  const desc = plan.description || '';
+  const features = Array.isArray(plan.features) ? plan.features : [];
+
+  const checkSvg = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>`;
+
+  const featuresHtml = features.length
+    ? `
+      <ul class="plan-features">
+        ${features.map(f => `
+          <li class="plan-feature">
+            <div class="feature-check">${checkSvg}</div>
+            ${escapeHtml(f)}
+          </li>
+        `).join('')}
+      </ul>
+    `
+    : `<ul class="plan-features"><li class="plan-feature" style="color:var(--text-light);font-style:italic;">Full access to the network</li></ul>`;
+
+  const ctaClass = isFeatured ? 'plan-cta plan-cta-filled' : 'plan-cta plan-cta-outline';
+
+  return `
+    <div class="plan-card${isFeatured ? ' popular' : ''} reveal reveal-d${Math.min(idx + 1, 4)}">
+      ${isFeatured ? '<div class="plan-popular-badge">Most Popular</div>' : ''}
+      <div class="plan-name">${escapeHtml(plan.name || plan.id || 'Plan')}</div>
+      <div class="plan-price">
+        <span class="plan-currency"${isFeatured ? ' style="color:var(--coral);"' : ''}>${escapeHtml(currencySym)}</span>
+        <span class="plan-amount${isFeatured ? ' popular-price' : ''}">${escapeHtml(priceWhole)}</span>
+        <span class="plan-per">${escapeHtml(periodLabel)}</span>
+      </div>
+      ${desc ? `<div class="plan-desc">${escapeHtml(desc)}</div>` : ''}
+      <div class="plan-divider"></div>
+      ${featuresHtml}
+      <button class="${ctaClass}" onclick="openModal('signup')">Get Started</button>
+    </div>
+  `;
+}
+
+
+/** "/ month" for monthly, "total" for prepaid lump sums (3-month, 6-month, yearly). */
+function formatPlanPeriod(plan) {
+  const interval = (plan.interval || 'month').toLowerCase();
+  const count    = Number(plan.intervalCount) || 1;
+  if (interval === 'month' && count === 1) return '/ month';
+  if (interval === 'year'  && count === 1) return 'total';
+  if (interval === 'month' && count >  1) return 'total';
+  // Fallback to whatever the backend says
+  return plan.period || '/ ' + interval;
+}
+
+function formatPriceWhole(p) {
+  const n = Number(p);
+  if (!Number.isFinite(n)) return '0';
+  // Whole dollars if no fractional part, else 2 decimals
+  return n % 1 === 0 ? String(n) : n.toFixed(2);
+}
+
+const CURRENCY_SYMBOLS = {
+  USD: '$', AUD: '$', CAD: '$', NZD: '$', SGD: '$', HKD: '$',
+  EUR: '€', GBP: '£', INR: '₹', JPY: '¥', AED: 'د.إ',
+};
+function currencySymbol(code) {
+  return CURRENCY_SYMBOLS[String(code || '').toUpperCase()] || '$';
+}
+
+function pricingMessage(text, kind = 'info') {
+  const color = kind === 'error' ? 'var(--coral)' : 'var(--text-light)';
+  return `<p style="grid-column:1/-1;text-align:center;color:${color};font-size:15px;padding:40px 0;">${escapeHtml(text)}</p>`;
+}
