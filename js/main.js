@@ -697,9 +697,9 @@ function growMessage(text, kind = 'info') {
 async function initPricing() {
   const grid = document.querySelector('.plans-grid');
   if (!grid) return;
-
+ 
   grid.innerHTML = pricingMessage('Loading plans…');
-
+ 
   let plans = [];
   try {
     const res = await fetch(`${API_BASE}/plans`);
@@ -717,12 +717,12 @@ async function initPricing() {
     );
     return;
   }
-
+ 
   if (!plans.length) {
     grid.innerHTML = pricingMessage('No plans are currently available.');
     return;
   }
-
+ 
   // Sort: featured first, then by sortOrder, then by price.
   plans.sort((a, b) => {
     if (!!b.isFeatured - !!a.isFeatured) return !!b.isFeatured - !!a.isFeatured;
@@ -730,24 +730,70 @@ async function initPricing() {
     if (so) return so;
     return (Number(a.price) || 0) - (Number(b.price) || 0);
   });
-
+ 
+  ensureTrialBadgeStyles();
+ 
   grid.innerHTML = plans.map((plan, i) => renderPlanCard(plan, i)).join('');
   setTimeout(observeAll, 50);
 }
-
+ 
 document.addEventListener('DOMContentLoaded', initPricing);
-
-
+ 
+ 
+/**
+ * Inject the trial-badge stylesheet once. Lives here (not in css/style.css)
+ * so the trial feature is fully self-contained in main.js — no coupled CSS
+ * edit required to ship it. Reuses --lime-soft / --lime-dark site variables.
+ */
+function ensureTrialBadgeStyles() {
+  if (document.getElementById('plan-trial-styles')) return;
+  const s = document.createElement('style');
+  s.id = 'plan-trial-styles';
+  s.textContent = `
+    .plan-trial-badge {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: var(--lime-soft, rgba(107,230,164,0.18));
+      color: var(--lime-dark, #1a8a50);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 5px 11px 5px 8px;
+      border-radius: 100px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      line-height: 1;
+    }
+    .plan-trial-badge svg { width: 11px; height: 11px; flex-shrink: 0; }
+    .plan-trial-note {
+      font-size: 11px;
+      color: var(--lime-dark, #1a8a50);
+      font-weight: 600;
+      margin-top: 6px;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+  `;
+  document.head.appendChild(s);
+}
+ 
+ 
 function renderPlanCard(plan, idx) {
-  const isFeatured = !!plan.isFeatured;
+  const isFeatured  = !!plan.isFeatured;
+  const trialDays   = Number(plan.trialPeriodDays) || 0;
+  const hasTrial    = trialDays > 0;
   const currencySym = currencySymbol(plan.currency || 'USD');
-  const priceWhole = formatPriceWhole(plan.price);
+  const priceWhole  = formatPriceWhole(plan.price);
   const periodLabel = formatPlanPeriod(plan);
-  const desc = plan.description || '';
-  const features = Array.isArray(plan.features) ? plan.features : [];
-
+  const desc        = plan.description || '';
+  const features    = Array.isArray(plan.features) ? plan.features : [];
+ 
   const checkSvg = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>`;
-
+  const giftSvg  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>`;
+ 
   const featuresHtml = features.length
     ? `
       <ul class="plan-features">
@@ -760,27 +806,48 @@ function renderPlanCard(plan, idx) {
       </ul>
     `
     : `<ul class="plan-features"><li class="plan-feature" style="color:var(--text-light);font-style:italic;">Full access to the network</li></ul>`;
-
+ 
   const ctaClass = isFeatured ? 'plan-cta plan-cta-filled' : 'plan-cta plan-cta-outline';
-
+  const ctaLabel = hasTrial ? `Start ${trialDays}-day trial` : 'Get Started';
+ 
+  // Trial badge — top-left of card. The "Most Popular" badge sits top-right
+  // so the two don't clash visually even on a card that's both featured + trial.
+  const trialBadge = hasTrial
+    ? `<div class="plan-trial-badge">${giftSvg} ${trialDays}-day free trial</div>`
+    : '';
+ 
+  // Pre-charge note under the price — tells the user explicitly when they'll
+  // first be charged. Strips a leading "/ " from period label since the
+  // sentence reads better without it ("Then $15 month" not "Then $15 / month").
+  const periodForNote = periodLabel.replace(/^\/ ?/, '');
+  const trialNote = hasTrial
+    ? `<div class="plan-trial-note">Then ${escapeHtml(currencySym)}${escapeHtml(priceWhole)} ${escapeHtml(periodForNote)} after ${trialDays} days</div>`
+    : '';
+ 
+  // Bump plan-name margin when trial badge present so the name doesn't sit
+  // under the badge on shorter cards.
+  const nameStyle = hasTrial ? ' style="margin-top:14px;"' : '';
+ 
   return `
     <div class="plan-card${isFeatured ? ' popular' : ''} reveal reveal-d${Math.min(idx + 1, 4)}">
+      ${trialBadge}
       ${isFeatured ? '<div class="plan-popular-badge">Most Popular</div>' : ''}
-      <div class="plan-name">${escapeHtml(plan.name || plan.id || 'Plan')}</div>
+      <div class="plan-name"${nameStyle}>${escapeHtml(plan.name || plan.id || 'Plan')}</div>
       <div class="plan-price">
         <span class="plan-currency"${isFeatured ? ' style="color:var(--coral);"' : ''}>${escapeHtml(currencySym)}</span>
         <span class="plan-amount${isFeatured ? ' popular-price' : ''}">${escapeHtml(priceWhole)}</span>
         <span class="plan-per">${escapeHtml(periodLabel)}</span>
       </div>
+      ${trialNote}
       ${desc ? `<div class="plan-desc">${escapeHtml(desc)}</div>` : ''}
       <div class="plan-divider"></div>
       ${featuresHtml}
-      <button class="${ctaClass}" onclick="openModal('signup')">Get Started</button>
+      <button class="${ctaClass}" onclick="openModal('signup')">${escapeHtml(ctaLabel)}</button>
     </div>
   `;
 }
-
-
+ 
+ 
 /** "/ month" for monthly, "total" for prepaid lump sums (3-month, 6-month, yearly). */
 function formatPlanPeriod(plan) {
   const interval = (plan.interval || 'month').toLowerCase();
@@ -791,14 +858,14 @@ function formatPlanPeriod(plan) {
   // Fallback to whatever the backend says
   return plan.period || '/ ' + interval;
 }
-
+ 
 function formatPriceWhole(p) {
   const n = Number(p);
   if (!Number.isFinite(n)) return '0';
   // Whole dollars if no fractional part, else 2 decimals
   return n % 1 === 0 ? String(n) : n.toFixed(2);
 }
-
+ 
 const CURRENCY_SYMBOLS = {
   USD: '$', AUD: '$', CAD: '$', NZD: '$', SGD: '$', HKD: '$',
   EUR: '€', GBP: '£', INR: '₹', JPY: '¥', AED: 'د.إ',
@@ -806,7 +873,7 @@ const CURRENCY_SYMBOLS = {
 function currencySymbol(code) {
   return CURRENCY_SYMBOLS[String(code || '').toUpperCase()] || '$';
 }
-
+ 
 function pricingMessage(text, kind = 'info') {
   const color = kind === 'error' ? 'var(--coral)' : 'var(--text-light)';
   return `<p style="grid-column:1/-1;text-align:center;color:${color};font-size:15px;padding:40px 0;">${escapeHtml(text)}</p>`;
