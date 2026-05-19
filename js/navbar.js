@@ -1,7 +1,13 @@
 /* ═══════════════════════════════════════════════
    MOVING GURU — Centralized Navbar + Auth State
    navbar.js — Sirf yahi ek file manage karo
-   ═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════
+
+   FIXED:
+   - pageMap mein 'pricing.html' add kiya (warna active state detect nahi hota)
+   - drawerIcon mein 'pricing' add kiya (mobile drawer mein icon ke liye)
+   - Pricing link both desktop nav + mobile drawer mein ab dikhega
+*/
 
 (function () {
 
@@ -17,10 +23,12 @@
   // ─── DETECT CURRENT PAGE ───
   const path = window.location.pathname.split('/').pop() || 'index.html';
   const pageMap = {
-    'index.html': 'home', '': 'home',
-    'how-it-works.html': 'how-it-works',
-    'community.html': 'community',
-    'grow.html': 'grow'
+    'index.html':         'home',
+    '':                   'home',
+    'how-it-works.html':  'how-it-works',
+    'community.html':     'community',
+    'grow.html':          'grow',
+    'pricing.html':       'pricing',
   };
   const currentPage = pageMap[path] || 'home';
 
@@ -31,9 +39,9 @@
     const links = [
       { page: 'home',         href: 'index.html',        label: 'Home' },
       { page: 'how-it-works', href: 'how-it-works.html', label: 'How It Works' },
-      { page: 'community',    href: 'community.html',     label: 'Community' },
-      { page: 'grow',         href: 'grow.html',          label: 'Grow' },
-      { page: 'pricing',      href: 'pricing.html',       label: 'Pricing' }
+      { page: 'community',    href: 'community.html',    label: 'Community' },
+      { page: 'grow',         href: 'grow.html',         label: 'Grow' },
+      { page: 'pricing',      href: 'pricing.html',      label: 'Pricing' },
     ];
 
     const navLinksHtml = links.map(l =>
@@ -70,7 +78,7 @@
       </div>
     `;
 
-    // Drawer links
+    // Drawer links — same source array as desktop so they never drift apart
     const drawerLinksHtml = links.map(l => `
       <a href="${l.href}" class="drawer-link${currentPage === l.page ? ' active' : ''}" data-page="${l.page}">
         <span class="drawer-link-icon">${drawerIcon(l.page)}</span> ${l.label}
@@ -113,7 +121,13 @@
   }
 
   function drawerIcon(page) {
-    return { home: '🏠', 'how-it-works': '💡', community: '🌍', grow: '🌱' }[page] || '📄';
+    return {
+      home:           '🏠',
+      'how-it-works': '💡',
+      community:      '🌍',
+      grow:           '🌱',
+      pricing:        '💎',
+    }[page] || '📄';
   }
 
   function getInitials(name) {

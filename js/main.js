@@ -513,21 +513,57 @@ function communityMessage(text, kind = 'info') {
 // small datasets and means changing a filter doesn't trigger a refetch.
 
 let growPosts = [];
-
+ 
 function growGridEl() { return document.getElementById('growGrid'); }
-
+ 
+/**
+ * Inject the featured-card stylesheet once. Keeps grow.html untouched.
+ */
+function ensureGrowFeaturedStyles() {
+  if (document.getElementById('grow-featured-styles')) return;
+  const s = document.createElement('style');
+  s.id = 'grow-featured-styles';
+  s.textContent = `
+    .grow-card { position: relative; }
+    .grow-card.featured {
+      border: 1.5px solid var(--lime-dark, #b5c61f);
+      box-shadow: 0 4px 20px rgba(212, 255, 0, 0.18);
+    }
+    .grow-card.featured::before {
+      content: '⚡ FEATURED';
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--lime, #d4ff00);
+      color: var(--dark, #3E3D38);
+      font-family: 'Unbounded', 'DM Sans', sans-serif;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      z-index: 2;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+    .grow-card.featured .grow-card-head { padding-right: 90px; }
+  `;
+  document.head.appendChild(s);
+}
+ 
 async function initGrow() {
   const grid = growGridEl();
   if (!grid) return;
-
+ 
+  ensureGrowFeaturedStyles();
+ 
   // Wire up filter change listeners
   ['growCountry', 'growMonth', 'growDisc', 'growType'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', renderGrowEvents);
   });
-
+ 
   grid.innerHTML = growMessage('Loading opportunities…');
-
+ 
   try {
     const res = await fetch(`${API_BASE}/grow-posts?per_page=50`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -535,7 +571,7 @@ async function initGrow() {
     if (!json || json.success === false) {
       throw new Error(json?.message || 'Request failed');
     }
-
+ 
     // /api/grow-posts returns posts as an array directly under .data
     // (unlike the wrapped {posts:[...]} shape used elsewhere).
     const list = Array.isArray(json?.data) ? json.data : [];
@@ -548,25 +584,30 @@ async function initGrow() {
     );
     return;
   }
-
+ 
   renderGrowEvents();
 }
-
+ 
 document.addEventListener('DOMContentLoaded', initGrow);
-
-
+ 
+ 
 /**
  * Map a GrowPost API record to the lean shape the Grow card expects.
+ *
+ * Note: `isFeatured` reads `is_currently_featured` (boost-window-aware) —
+ * NOT the raw `is_featured` column. An expired boost should not show
+ * the badge.
  */
 function toGrowEvent(p) {
   const dateLabel  = formatGrowDateLabel(p?.date_from, p?.date_to);
   const monthName  = monthFromDate(p?.date_from);
   const country    = countryFromLocation(p?.location);
   const typeLabel  = capitalize(p?.type || 'Event');
-  const tag        = pickTag(p);
+  const isFeatured = !!p?.is_currently_featured;
+  const tag        = pickTag(p, isFeatured);
   const disciplineNames = Array.isArray(p?.disciplines) ? p.disciplines : [];
   const cover      = Array.isArray(p?.images) && p.images[0] ? p.images[0] : null;
-
+ 
   return {
     id:        p?.id,
     type:      typeLabel,
@@ -581,10 +622,10 @@ function toGrowEvent(p) {
     disciplines: disciplineNames,
     cover,
     externalUrl: p?.external_url || null,
-    isFeatured:  !!p?.is_featured,
+    isFeatured,
   };
 }
-
+ 
 /** "Nov 2026" or "Nov 6 – Nov 13, 2026" depending on whether ranges differ. */
 function formatGrowDateLabel(from, to) {
   if (!from) return null;
@@ -599,45 +640,50 @@ function formatGrowDateLabel(from, to) {
   }
   return `${f.toLocaleDateString('en-US', opts)} – ${t.toLocaleDateString('en-US', opts)}`;
 }
-
+ 
 function monthFromDate(d) {
   if (!d) return '';
   const date = new Date(d);
   if (isNaN(date.getTime())) return '';
   return MONTHS[date.getMonth()] || '';
 }
-
+ 
 /** "Koh Samui, Thailand" → "Thailand". Returns last comma-separated part. */
 function countryFromLocation(loc) {
   if (!loc) return '';
   const parts = String(loc).split(',').map(s => s.trim()).filter(Boolean);
   return parts.length ? parts[parts.length - 1] : '';
 }
-
-/** Pick a single tag to show on the card — first explicit tag wins, then falls back. */
-function pickTag(p) {
+ 
+/**
+ * Pick a single tag to show on the card.
+ *
+ * Note: 'Featured' is intentionally NOT in this list anymore — the ribbon
+ * overlay handles featured state visually. The text tag is reserved for
+ * explicit tags or capacity signals (Sold Out / Almost Full).
+ */
+function pickTag(p, isCurrentlyFeatured) {
   if (Array.isArray(p?.tags) && p.tags.length) return p.tags[0];
-  if (p?.is_featured) return 'Featured';
   if (p?.spots_left === 0) return 'Sold Out';
   if (typeof p?.spots_left === 'number' && p.spots_left <= 5) return 'Almost Full';
   return '';
 }
-
+ 
 function capitalize(s) {
   s = String(s || '');
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
-
-
+ 
+ 
 function renderGrowEvents() {
   const grid = growGridEl();
   if (!grid) return;
-
+ 
   const country = document.getElementById('growCountry')?.value || '';
   const month   = document.getElementById('growMonth')?.value   || '';
   const disc    = document.getElementById('growDisc')?.value    || '';
   const type    = document.getElementById('growType')?.value    || '';
-
+ 
   const filtered = growPosts.filter(e => {
     if (country && e.country !== country) return false;
     if (month   && e.month   !== month)   return false;
@@ -645,7 +691,7 @@ function renderGrowEvents() {
     if (type    && e.typeRaw !== type.toLowerCase()) return false;
     return true;
   });
-
+ 
   if (!filtered.length) {
     grid.innerHTML = growMessage(
       growPosts.length === 0
@@ -654,9 +700,9 @@ function renderGrowEvents() {
     );
     return;
   }
-
+ 
   grid.innerHTML = filtered.map((e, i) => `
-    <div class="grow-card reveal reveal-d${Math.min(i + 1, 4)}">
+    <div class="grow-card${e.isFeatured ? ' featured' : ''} reveal reveal-d${Math.min(i + 1, 4)}">
       <div class="grow-card-head">
         <span class="grow-type">${escapeHtml(e.type)}</span>
         <span class="grow-date">${escapeHtml(e.date)}</span>
@@ -674,7 +720,7 @@ function renderGrowEvents() {
   `).join('');
   setTimeout(observeAll, 50);
 }
-
+ 
 function growMessage(text, kind = 'info') {
   const color = kind === 'error' ? 'var(--coral)' : 'var(--text-light)';
   return `<p style="grid-column:1/-1;text-align:center;color:${color};font-size:15px;padding:40px 0;">${escapeHtml(text)}</p>`;
