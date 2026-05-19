@@ -1,0 +1,103 @@
+/* ═══════════════════════════════════════════════
+   MOVING GURU — Brand Lime Override
+   ───────────────────────────────────────────────
+   Drop-in stylesheet that swaps the old coral red
+   (#CE4F56) for soft mint green (#9DD964) across the
+   entire public site.
+
+   How to use:
+     <link rel="stylesheet" href="css/style.css" />
+     <link rel="stylesheet" href="css/brand-lime.css" />   ← AFTER style.css
+
+   Make sure this loads AFTER style.css so the
+   variable overrides win the cascade.
+   ═══════════════════════════════════════════════ */
+
+:root {
+  /* ── Primary CTA accent ────────────────────────────────────
+     `--coral` is the brand button colour — was red coral,
+     now mint green. Every rule in style.css that says
+     `background: var(--coral)` or `color: var(--coral)`
+     picks this up automatically. */
+  --coral: #9DD964;
+
+  /* ── Fix variables that were mistakenly red ────────────────
+     The original style.css had `--lime-dark` and `--lime-soft`
+     pointing at red hex codes (likely a copy/paste bug).
+     Restoring them to actual lime/mint tones so links,
+     hover states, and active disc-tabs read as green. */
+  --lime-dark: #87C04E;
+  --lime-soft: rgba(157, 217, 100, 0.12);
+}
+
+/* ── Hardcoded RGBA glows ──────────────────────────────────
+   These rules in style.css used literal red rgba() for
+   box-shadow glows instead of variables, so the variable
+   swap above won't reach them. Re-declare with mint rgba. */
+
+.btn-cta-primary:hover {
+  box-shadow: 0 0 36px rgba(157, 217, 100, 0.35);
+}
+
+.search-btn:hover {
+  box-shadow: 0 4px 16px rgba(157, 217, 100, 0.30);
+}
+
+.btn-nav-signup:hover {
+  box-shadow: 0 4px 20px rgba(157, 217, 100, 0.25);
+}
+
+.drawer-btn-signup:hover {
+  box-shadow: 0 4px 16px rgba(157, 217, 100, 0.25);
+}
+
+.btn-connect:hover {
+  box-shadow: 0 6px 24px rgba(157, 217, 100, 0.28);
+}
+
+.plan-cta-filled:hover {
+  box-shadow: 0 4px 20px rgba(157, 217, 100, 0.25);
+}
+
+/* Hero overlay used a red wash in the middle — switch to
+   subtle mint so the top of the homepage feels on-brand. */
+.hero-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(62, 61, 56, 0.45) 0%,
+    rgba(157, 217, 100, 0.20) 50%,
+    rgba(62, 61, 56, 0.55) 100%
+  );
+}
+
+/* Step numbers on "How It Works" had a red→orange gradient.
+   Re-tone to mint→orange so the numbers still pop but match. */
+.step-num {
+  background: linear-gradient(
+    135deg,
+    rgba(157, 217, 100, 0.45),
+    rgba(232, 149, 96, 0.25)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Pricing-hero radial glow was tinted with rgba(245,252,166).
+   That's the pale lime already — leave it alone. */
+
+/* ── Optional: soften the "bg-dark" CTA section ───────────
+   `.bg-dark` is set to var(--coral) in style.css, so after
+   the variable swap those CTA sections (community.html
+   "Join the network", pricing.html "Ready to start") will
+   render as full mint green panels. That can feel a bit
+   intense as a wall of colour, so tone them down with a
+   gradient that fades from mint to a deeper green-grey. */
+.bg-dark {
+  background: linear-gradient(
+    135deg,
+    #9DD964 0%,
+    #7FB851 60%,
+    #5C8E3B 100%
+  );
+}
