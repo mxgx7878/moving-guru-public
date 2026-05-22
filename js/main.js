@@ -251,6 +251,8 @@ function setDisc(i) {
 document.addEventListener('DOMContentLoaded', renderDisc);
 
 
+
+
 // ─── HERO SLIDE DOTS ───
 function initHeroDots() {
   const dots = document.querySelectorAll('.hero-dot');
