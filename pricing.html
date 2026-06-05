@@ -21,16 +21,16 @@
         overflow: hidden;
         padding: 0 40px 56px;
         margin-top: 62px;
-        background: var(--dark);
+        background: var(--coral);
       }
       .pricing-hero-bg {
         position: absolute;
         inset: 0;
         background: linear-gradient(
           135deg,
-          #3e3d38 0%,
-          #2a2925 60%,
-          #1a1a18 100%
+          #B4FF5A 0%,
+          #A6F24D 60%,
+          #8FE03D 100%
         );
         overflow: hidden;
       }
@@ -44,7 +44,7 @@
         border-radius: 50%;
         background: radial-gradient(
           circle,
-          rgba(245, 252, 166, 0.08) 0%,
+          rgba(245, 253, 166, 0.45) 0%,
           transparent 70%
         );
       }
@@ -59,22 +59,26 @@
         font-family: "Unbounded", cursive;
         font-size: clamp(34px, 5vw, 56px);
         font-weight: 900;
-        color: #fff;
+        color: var(--text);
         line-height: 1.05;
       }
       .pricing-hero-content h1 span {
-        color: var(--lime);
+        color: var(--text);
+        text-decoration: underline;
+        text-decoration-color: var(--white);
+        text-decoration-thickness: 4px;
+        text-underline-offset: 6px;
       }
       .pricing-hero-content p {
         font-size: 16px;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(26, 26, 24, 0.65);
         margin-top: 12px;
         max-width: 480px;
         line-height: 1.6;
       }
 
       .promo-banner {
-        background: linear-gradient(135deg, var(--orange), #d4810f);
+        background: linear-gradient(135deg, #F5FDA6, #E6F25A);
         padding: 28px 40px;
         position: relative;
         overflow: hidden;
@@ -88,7 +92,7 @@
         font-family: "Unbounded", cursive;
         font-size: 64px;
         font-weight: 900;
-        color: rgba(255, 255, 255, 0.06);
+        color: rgba(26, 26, 24, 0.07);
         white-space: nowrap;
       }
       .promo-inner {
@@ -101,21 +105,21 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(26, 26, 24, 0.12);
         border-radius: 100px;
         padding: 4px 14px;
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 2px;
         text-transform: uppercase;
-        color: #fff;
+        color: var(--text);
         margin-bottom: 14px;
       }
       .promo-title {
         font-family: "Unbounded", cursive;
         font-size: 22px;
         font-weight: 800;
-        color: #fff;
+        color: var(--text);
         margin-bottom: 16px;
       }
       .promo-grid {
@@ -127,7 +131,7 @@
         display: flex;
         align-items: flex-start;
         gap: 10px;
-        background: rgba(255, 255, 255, 0.12);
+        background: rgba(26, 26, 24, 0.07);
         border-radius: 12px;
         padding: 14px 16px;
       }
@@ -138,13 +142,13 @@
       }
       .promo-item p {
         font-size: 13px;
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(26, 26, 24, 0.8);
         line-height: 1.5;
         margin: 0;
         font-weight: 500;
       }
       .promo-item strong {
-        color: #fff;
+        color: var(--text);
       }
 
       .plans-section {
@@ -202,7 +206,7 @@
       }
       .plan-card.popular {
         border-color: var(--coral);
-        box-shadow: 0 8px 40px rgba(206, 79, 86, 0.12);
+        box-shadow: 0 8px 40px rgba(180, 255, 90, 0.18);
       }
       .plan-card.popular::before {
         content: "";
@@ -211,14 +215,14 @@
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, var(--coral), var(--orange));
+        background: linear-gradient(90deg, var(--coral), var(--lime));
       }
       .plan-popular-badge {
         position: absolute;
         top: 20px;
         right: 20px;
         background: var(--coral);
-        color: #fff;
+        color: var(--text);
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 1px;
@@ -275,7 +279,7 @@
         font-size: 11px;
         font-weight: 700;
         color: #1a8a50;
-        background: rgba(107, 230, 164, 0.15);
+        background: rgba(180, 255, 90, 0.25);
         border-radius: 6px;
         padding: 4px 10px;
         display: inline-block;
@@ -306,7 +310,7 @@
         width: 18px;
         height: 18px;
         border-radius: 50%;
-        background: rgba(107, 230, 164, 0.2);
+        background: rgba(180, 255, 90, 0.3);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -338,12 +342,12 @@
       }
       .plan-cta-filled {
         background: var(--coral);
-        color: #fff;
+        color: var(--text);
         border: none;
       }
       .plan-cta-filled:hover {
         transform: scale(1.02);
-        box-shadow: 0 4px 20px rgba(206, 79, 86, 0.25);
+        box-shadow: 0 4px 20px rgba(180, 255, 90, 0.3);
       }
 
       .for-section {
@@ -413,7 +417,7 @@
 
       .sponsorship-section {
         padding: 80px 40px;
-        background: var(--dark);
+        background: var(--coral);
         position: relative;
         overflow: hidden;
       }
@@ -445,16 +449,20 @@
         font-family: "Unbounded", cursive;
         font-size: clamp(26px, 3.5vw, 40px);
         font-weight: 900;
-        color: #fff;
+        color: var(--text);
         line-height: 1.1;
         margin-bottom: 16px;
       }
       .sponsorship-text h2 span {
-        color: var(--lime);
+        color: var(--text);
+        text-decoration: underline;
+        text-decoration-color: var(--white);
+        text-decoration-thickness: 4px;
+        text-underline-offset: 6px;
       }
       .sponsorship-text p {
         font-size: 14px;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(26, 26, 24, 0.65);
         line-height: 1.8;
         margin-bottom: 14px;
       }
@@ -466,11 +474,11 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 2px;
-        color: rgba(255, 255, 255, 0.3);
+        color: rgba(26, 26, 24, 0.5);
         margin-bottom: 10px;
       }
       .milestone-bar-wrap {
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(26, 26, 24, 0.12);
         border-radius: 100px;
         height: 8px;
         overflow: hidden;
@@ -481,8 +489,8 @@
         border-radius: 100px;
         background: linear-gradient(
           90deg,
-          var(--lime),
-          rgba(245, 252, 166, 0.6)
+          var(--text),
+          rgba(26, 26, 24, 0.65)
         );
         width: 3%;
         transition: width 1.5s ease;
@@ -491,18 +499,18 @@
         display: flex;
         justify-content: space-between;
         font-size: 11px;
-        color: rgba(255, 255, 255, 0.3);
+        color: rgba(26, 26, 24, 0.5);
       }
       .milestone-current {
         font-family: "Unbounded", cursive;
         font-size: 13px;
-        color: var(--lime);
+        color: var(--text);
         font-weight: 700;
       }
 
       .sponsorship-who {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(26, 26, 24, 0.05);
+        border: 1px solid rgba(26, 26, 24, 0.1);
         border-radius: var(--radius-lg);
         padding: 32px;
       }
@@ -510,7 +518,7 @@
         font-family: "Unbounded", cursive;
         font-size: 15px;
         font-weight: 700;
-        color: var(--lime);
+        color: var(--text);
         margin-bottom: 20px;
       }
       .sponsor-recipient {
@@ -519,7 +527,7 @@
         gap: 14px;
         margin-bottom: 20px;
         padding-bottom: 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        border-bottom: 1px solid rgba(26, 26, 24, 0.1);
       }
       .sponsor-recipient:last-child {
         margin-bottom: 0;
@@ -533,12 +541,12 @@
       .sponsor-info h4 {
         font-size: 14px;
         font-weight: 700;
-        color: #fff;
+        color: var(--text);
         margin-bottom: 4px;
       }
       .sponsor-info p {
         font-size: 12px;
-        color: rgba(255, 255, 255, 0.4);
+        color: rgba(26, 26, 24, 0.55);
         margin: 0;
         line-height: 1.5;
       }
@@ -591,7 +599,7 @@
       .faq-item.open .faq-icon {
         background: var(--coral);
         border-color: var(--coral);
-        color: #fff;
+        color: var(--text);
         transform: rotate(45deg);
       }
       .faq-answer {
@@ -654,10 +662,10 @@
       <div class="pricing-hero-bg"></div>
       <div class="pricing-hero-content">
         <div class="section-tag" style="margin-bottom: 16px">
-          <div class="section-tag-line" style="background: var(--lime)"></div>
+          <div class="section-tag-line" style="background: var(--text)"></div>
           <span
             class="section-tag-text"
-            style="color: rgba(255, 255, 255, 0.35)"
+            style="color: rgba(26, 26, 24, 0.55)"
             >Membership</span
           >
         </div>
@@ -677,12 +685,12 @@
           Launch promos happening for a limited time
         </div>
         <div style="max-width: 700px">
-          <p style="color: #fff; line-height: 1.8; font-size: 15px">
+          <p style="color: var(--text); line-height: 1.8; font-size: 15px">
             As we build our network we are offering discounted ongoing
             subscriptions.
           </p>
 
-          <p style="color: #fff; line-height: 1.8; font-size: 15px">
+          <p style="color: var(--text); line-height: 1.8; font-size: 15px">
             So sign up now to get before it's full price!
           </p>
         </div>
@@ -1017,7 +1025,7 @@
           <div class="for-card reveal">
             <div
               class="for-card-icon"
-              style="background: rgba(206, 79, 86, 0.1)"
+              style="background: rgba(180, 255, 90, 0.25)"
             >
               🧘
             </div>
@@ -1038,7 +1046,7 @@
           <div class="for-card reveal reveal-d2">
             <div
               class="for-card-icon"
-              style="background: rgba(45, 164, 214, 0.1)"
+              style="background: rgba(245, 253, 166, 0.7)"
             >
               🏢
             </div>
@@ -1065,10 +1073,10 @@
       <div class="sponsorship-inner">
         <div class="sponsorship-text reveal">
           <div class="section-tag" style="margin-bottom: 20px">
-            <div class="section-tag-line" style="background: var(--lime)"></div>
+            <div class="section-tag-line" style="background: var(--text)"></div>
             <span
               class="section-tag-text"
-              style="color: rgba(255, 255, 255, 0.35)"
+              style="color: rgba(26, 26, 24, 0.55)"
               >The Big Dream</span
             >
           </div>
