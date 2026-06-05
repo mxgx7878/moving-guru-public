@@ -98,7 +98,7 @@ function submitGrowForm(e) {
   // Simulate submission (replace with real endpoint later)
   setTimeout(function () {
     submitBtn.textContent = 'Submitted!';
-    submitBtn.style.background = '#8B9A00';
+    submitBtn.style.background = '#8FE03D';
 
     setTimeout(function () {
       closeGrowForm();

@@ -528,16 +528,16 @@ function ensureGrowFeaturedStyles() {
   s.textContent = `
     .grow-card { position: relative; }
     .grow-card.featured {
-      border: 1.5px solid var(--lime-dark, #b5c61f);
-      box-shadow: 0 4px 20px rgba(212, 255, 0, 0.18);
+      border: 1.5px solid var(--lime-dark, #8FE03D);
+      box-shadow: 0 4px 20px rgba(180, 255, 90, 0.18);
     }
     .grow-card.featured::before {
       content: '⚡ FEATURED';
       position: absolute;
       top: 14px;
       right: 14px;
-      background: var(--lime, #d4ff00);
-      color: var(--dark, #3E3D38);
+      background: var(--lime, #F5FDA6);
+      color: var(--dark, #1A1A18);
       font-family: 'Unbounded', 'DM Sans', sans-serif;
       font-size: 9px;
       font-weight: 900;
@@ -802,7 +802,7 @@ function ensureTrialBadgeStyles() {
       position: absolute;
       top: 20px;
       left: 20px;
-      background: var(--lime-soft, rgba(107,230,164,0.18));
+      background: var(--lime-soft, rgba(180,255,90,0.12));
       color: var(--lime-dark, #1a8a50);
       font-size: 10px;
       font-weight: 700;
