@@ -119,12 +119,12 @@ button { font-family: 'DM Sans', sans-serif; }
 }
 .nav-logo em { font-style: normal; color: var(--lime-dark); }
 .nav-logo-img {
-  height: 60px;
+  height: 80px;
   width: auto;
   display: block;
   object-fit: contain;
 }
-.navbar.scrolled .nav-logo-img { height: 50px; }
+.navbar.scrolled .nav-logo-img { height: 70px; }
 .nav-links { display: flex; align-items: center; gap: 6px; }
 .nav-link {
   color: var(--text-mid); font-size: 13.5px; font-weight: 500;
@@ -490,7 +490,7 @@ button { font-family: 'DM Sans', sans-serif; }
    ═══════════════════════════════════════════════ */
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
 .about-image { border-radius: var(--radius-lg); overflow: hidden; }
-.about-image img { width: 100%; height: 400px; object-fit: cover; }
+.about-image img { width: 100%; height: 400px; object-fit: contain; }
 .about-text h2 {
   font-family: 'Unbounded', cursive;
   font-size: clamp(26px, 3.2vw, 38px); font-weight: 800;
