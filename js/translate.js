@@ -53,8 +53,8 @@
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: #1A1A18;
-      color: #D4FF00;
+      background: #B4FF5A;
+      color: #1A1A18;
       border: none;
       cursor: pointer;
       display: flex;
@@ -70,7 +70,7 @@
     }
     .mg-translate-fab .fa-globe {
       font-size: 20px;
-      color: #D4FF00;
+      color: #1A1A18;
     }
 
     /* Dropdown panel */
@@ -127,7 +127,7 @@
       transition: border-color 0.2s;
     }
     .mg-translate-search input:focus {
-      border-color: #8B9A00;
+      border-color: #B4FF5A;
     }
     .mg-translate-search input::placeholder {
       color: #9A9A94;
@@ -160,8 +160,8 @@
       background: #F7F5F0;
     }
     .mg-translate-item.active {
-      background: rgba(212,255,0,0.1);
-      color: #8B9A00;
+      background: rgba(180,255,90,0.2);
+      color: #1a8a50;
       font-weight: 600;
     }
     .mg-translate-item .mg-flag {
