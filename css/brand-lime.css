@@ -1,9 +1,15 @@
 /* ═══════════════════════════════════════════════
-   MOVING GURU — Brand Lime Override
+   MOVING GURU — Brand Colour Override
    ───────────────────────────────────────────────
-   Drop-in stylesheet that swaps the old coral red
-   (#CE4F56) for soft mint green (#9DD964) across the
-   entire public site.
+   Drop-in stylesheet that enforces the approved brand
+   palette across the entire public site:
+
+     Green   #B4FF5A   (primary)
+     Yellow  #F5FDA6   (secondary)
+     Black   #1A1A18   (text only, never a background)
+     White   #FFFFFF
+
+   No blue / red / purple / orange anywhere.
 
    How to use:
      <link rel="stylesheet" href="css/style.css" />
@@ -15,89 +21,84 @@
 
 :root {
   /* ── Primary CTA accent ────────────────────────────────────
-     `--coral` is the brand button colour — was red coral,
-     now mint green. Every rule in style.css that says
+     `--coral` is the brand button colour — now brand green.
+     Every rule in style.css that says
      `background: var(--coral)` or `color: var(--coral)`
      picks this up automatically. */
-  --coral: #9DD964;
+  --coral: #B4FF5A;
 
-  /* ── Fix variables that were mistakenly red ────────────────
-     The original style.css had `--lime-dark` and `--lime-soft`
-     pointing at red hex codes (likely a copy/paste bug).
-     Restoring them to actual lime/mint tones so links,
-     hover states, and active disc-tabs read as green. */
-  --lime-dark: #87C04E;
-  --lime-soft: rgba(157, 217, 100, 0.12);
+  /* ── Keep the lime helpers on-brand ────────────────────────
+     `--lime-dark` is the slightly deeper green used for
+     links, hover states and active disc-tabs; `--lime-soft`
+     is its faint tint. Both stay in the green family. */
+  --lime-dark: #8FE03D;
+  --lime-soft: rgba(180, 255, 90, 0.12);
 }
 
 /* ── Hardcoded RGBA glows ──────────────────────────────────
-   These rules in style.css used literal red rgba() for
-   box-shadow glows instead of variables, so the variable
-   swap above won't reach them. Re-declare with mint rgba. */
+   These rules in style.css used literal rgba() for box-shadow
+   glows instead of variables, so the variable swap above won't
+   reach them. Re-declare with brand-green rgba. */
 
 .btn-cta-primary:hover {
-  box-shadow: 0 0 36px rgba(157, 217, 100, 0.35);
+  box-shadow: 0 0 36px rgba(180, 255, 90, 0.35);
 }
 
 .search-btn:hover {
-  box-shadow: 0 4px 16px rgba(157, 217, 100, 0.30);
+  box-shadow: 0 4px 16px rgba(180, 255, 90, 0.30);
 }
 
 .btn-nav-signup:hover {
-  box-shadow: 0 4px 20px rgba(157, 217, 100, 0.25);
+  box-shadow: 0 4px 20px rgba(180, 255, 90, 0.25);
 }
 
 .drawer-btn-signup:hover {
-  box-shadow: 0 4px 16px rgba(157, 217, 100, 0.25);
+  box-shadow: 0 4px 16px rgba(180, 255, 90, 0.25);
 }
 
 .btn-connect:hover {
-  box-shadow: 0 6px 24px rgba(157, 217, 100, 0.28);
+  box-shadow: 0 6px 24px rgba(180, 255, 90, 0.28);
 }
 
 .plan-cta-filled:hover {
-  box-shadow: 0 4px 20px rgba(157, 217, 100, 0.25);
+  box-shadow: 0 4px 20px rgba(180, 255, 90, 0.25);
 }
 
-/* Hero overlay used a red wash in the middle — switch to
-   subtle mint so the top of the homepage feels on-brand. */
+/* Hero overlay — subtle brand-green wash in the middle so the
+   top of the homepage feels on-brand. */
 .hero-overlay {
   background: linear-gradient(
     180deg,
-    rgba(62, 61, 56, 0.45) 0%,
-    rgba(157, 217, 100, 0.20) 50%,
-    rgba(62, 61, 56, 0.55) 100%
+    rgba(26, 26, 24, 0.45) 0%,
+    rgba(180, 255, 90, 0.20) 50%,
+    rgba(26, 26, 24, 0.55) 100%
   );
 }
 
-/* Step numbers on "How It Works" had a red→orange gradient.
-   Re-tone to mint→orange so the numbers still pop but match. */
+/* Step numbers on "How It Works" — green→yellow gradient so the
+   numbers still pop while staying on-brand. */
 .step-num {
   background: linear-gradient(
     135deg,
-    rgba(157, 217, 100, 0.45),
-    rgba(232, 149, 96, 0.25)
+    #B4FF5A,
+    #F5FDA6
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Pricing-hero radial glow was tinted with rgba(245,252,166).
-   That's the pale lime already — leave it alone. */
-
-/* ── Optional: soften the "bg-dark" CTA section ───────────
-   `.bg-dark` is set to var(--coral) in style.css, so after
-   the variable swap those CTA sections (community.html
-   "Join the network", pricing.html "Ready to start") will
-   render as full mint green panels. That can feel a bit
-   intense as a wall of colour, so tone them down with a
-   gradient that fades from mint to a deeper green-grey. */
+/* ── "bg-dark" CTA section ─────────────────────────────────
+   `.bg-dark` is set to var(--coral) in style.css, so those CTA
+   sections (community.html "Join the network", pricing.html
+   "Ready to start") render as brand-green panels. Use a gentle
+   green gradient so the wall of colour has some depth. Text on
+   these panels is black, set in style.css. */
 .bg-dark {
   background: linear-gradient(
     135deg,
-    #9DD964 0%,
-    #7FB851 60%,
-    #5C8E3B 100%
+    #B4FF5A 0%,
+    #A6F24D 60%,
+    #8FE03D 100%
   );
 }
