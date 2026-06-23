@@ -1303,3 +1303,54 @@ footer {
   .hamburger { display: flex; }
   .btn-nav-login, .btn-nav-signup { display: none; }
 }
+
+.home-banner {
+  position: relative;
+  padding-top: 96px;          /* fixed navbar ko clear karta hai */
+  background: var(--bg);
+  overflow: hidden;
+}
+.home-banner-img {
+  display: block;
+  width: 100%;
+  height: auto;               /* natural aspect — logo kabhi crop nahi hoga */
+}
+
+/* ── OPTION 1: search image ke UPAR (bottom area me overlay) ── */
+.home-banner--overlay .home-banner-search {
+  position: absolute;
+  left: 50%;
+  bottom: 7%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 720px;
+  padding: 0 24px;
+  z-index: 5;
+}
+/* glass/dark search style yahan as-is chalega (image ke upar hai) */
+
+/* ── OPTION 2: search image ke NEECHE (light background pe) ── */
+.home-banner-search--below {
+  padding: 36px 24px 8px;
+  background: var(--bg);
+}
+.home-banner-search--below .search-container { margin: 0 auto; }
+
+/* light theme overrides — solid white bar, dark text */
+.home-banner-search--below .search-bar-main {
+  background: var(--white);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.home-banner-search--below .search-bar-main input { color: var(--text); }
+.home-banner-search--below .search-bar-main input::placeholder { color: var(--text-light); }
+.home-banner-search--below .search-icon { color: var(--text-light); }
+.home-banner-search--below .filter-select {
+  background: var(--white);
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.home-banner-search--below .filter-select option { background: var(--white); color: var(--text); }
+.home-banner-search--below .filter-arrow { color: var(--text-light); }
