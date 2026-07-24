@@ -6,8 +6,8 @@
 // Same backend the React portal talks to. The instructors / grow-posts /
 // plans endpoints are all publicly accessible (no auth header needed).
 // See routes/api.php — these routes sit above the auth:sanctum group.
-const API_BASE = 'https://demowebportals.com/moving-guru-backend/public/api';
-
+ const API_BASE = 'https://movingguru.co/moving-guru-backend/public/api';
+//  const API_BASE = 'http://localhost:8000/api'
 
 // ─── DATA ───
 // NOTE: This list is the single source of truth for the public
@@ -601,11 +601,12 @@ document.addEventListener('DOMContentLoaded', initGrow);
  * the badge.
  */
 function toGrowEvent(p) {
+  
   const dateLabel  = formatGrowDateLabel(p?.date_from, p?.date_to);
   const monthName  = monthFromDate(p?.date_from);
   const country    = countryFromLocation(p?.location);
   const typeLabel  = capitalize(p?.type || 'Event');
-  const isFeatured = !!p?.is_currently_featured;
+  const isFeatured = !!p?.is_featured;
   const tag        = pickTag(p, isFeatured);
   const disciplineNames = Array.isArray(p?.disciplines) ? p.disciplines : [];
   const cover      = Array.isArray(p?.images) && p.images[0] ? p.images[0] : null;
@@ -702,8 +703,11 @@ function renderGrowEvents() {
     );
     return;
   }
+
+  console.log(filtered)
  
   grid.innerHTML = filtered.map((e, i) => `
+  
     <div class="grow-card${e.isFeatured ? ' featured' : ''} reveal reveal-d${Math.min(i + 1, 4)}">
       <div class="grow-card-head">
         <span class="grow-type">${escapeHtml(e.type)}</span>

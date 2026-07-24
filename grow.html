@@ -16,7 +16,7 @@
 <!-- ═══════ PAGE HERO ═══════ -->
 <div class="page-hero">
   <div class="page-hero-img">
-    <img src="images/wellness banner.jpg" alt="Wellness retreat" />
+    <img src="images/wellness banner.webp" alt="Wellness retreat" />
     <!-- <div class="page-hero-overlay"></div> -->
   </div>
   <div class="page-hero-content">
@@ -245,7 +245,7 @@
       </select>
       <select class="grow-filter-select" id="growDisc">
         <option value="">All Disciplines</option>
-        <!-- Options injected by js/main.js → populateDisciplineSelect() -->
+        <!-- Options loaded from GET /api/disciplines -->
       </select>
       <select class="grow-filter-select" id="growType">
         <option value="">All Types</option>
@@ -271,7 +271,7 @@
     <p style="max-width:600px;">Are you a studio, independent guru, or organisation hosting a retreat, event, or training program? List it in our GROW community and help people discover opportunities to learn, connect, and grow. Fill your spots by promoting your offering to a community actively seeking meaningful experiences.</p>
     <p style="font-size:14px;color:rgba(26,26,24,0.6);line-height:1.7;max-width:520px;margin:0 auto 16px;">Submit your post with photos, a bio, and links to your event, training, or retreat. Choose a listing duration and make a one-off payment — no subscriptions, no ongoing fees.</p>
 
-    <div style="display:flex;justify-content:center;gap:20px;margin:36px auto 0;flex-wrap:wrap;">
+    <!-- <div style="display:flex;justify-content:center;gap:20px;margin:36px auto 0;flex-wrap:wrap;">
       <div style="text-align:center;padding:16px 24px;border:1px solid rgba(26,26,24,0.15);border-radius:16px;min-width:120px;">
         <div style="font-family:'Unbounded',cursive;font-size:13px;color:rgba(26,26,24,0.55);margin-bottom:4px;">1 Week</div>
         <div style="font-family:'Unbounded',cursive;font-size:28px;font-weight:800;color:var(--text);">$29</div>
@@ -284,7 +284,7 @@
         <div style="font-family:'Unbounded',cursive;font-size:13px;color:rgba(26,26,24,0.55);margin-bottom:4px;">3 Months</div>
         <div style="font-family:'Unbounded',cursive;font-size:28px;font-weight:800;color:var(--text);">$149</div>
       </div>
-    </div>
+    </div> -->
 
     <div class="cta-buttons" style="margin-top:40px;">
       <button class="btn-cta-primary" onclick="openGrowForm()">Submit Your Listing</button>
@@ -303,24 +303,30 @@
       <p>Fill in the details below and we'll get your offering live on the Grow board.</p>
     </div>
 
-    <form id="growListingForm" onsubmit="submitGrowForm(event)">
+    <form id="growListingForm" onsubmit="submitPaidGrowForm(event)">
 
       <!-- Contact -->
       <div class="grow-form-section-label">Your Details</div>
       <div class="grow-form-row">
         <div class="grow-form-field">
           <label>Contact Name</label>
-          <input type="text" placeholder="Your name" required />
+          <input type="text" name="contact_name" placeholder="Your name" required />
         </div>
         <div class="grow-form-field">
           <label>Email</label>
-          <input type="email" placeholder="you@email.com" required />
+          <input type="email" name="contact_email" placeholder="you@email.com" required />
         </div>
       </div>
 
-      <div class="grow-form-field">
-        <label>Organisation / Studio Name</label>
-        <input type="text" placeholder="e.g. Bali Soul Flow, Imagine Studios" required />
+      <div class="grow-form-row">
+        <div class="grow-form-field">
+          <label>Contact Phone</label>
+          <input type="tel" name="contact_phone" placeholder="e.g. +61 400 000 000" required />
+        </div>
+        <div class="grow-form-field">
+          <label>Studio / Organisation Name</label>
+          <input type="text" name="organization_name" placeholder="e.g. Bali Soul Flow" required />
+        </div>
       </div>
 
       <!-- Listing details -->
@@ -329,90 +335,102 @@
       <div class="grow-form-row">
         <div class="grow-form-field">
           <label>Listing Type</label>
-          <select required>
+          <select name="type" required>
             <option value="" disabled selected>Select type</option>
-            <option>Training</option>
-            <option>Retreat</option>
-            <option>Event</option>
+            <option value="training">Training</option>
+            <option value="retreat">Retreat</option>
+            <option value="event">Event</option>
           </select>
         </div>
         <div class="grow-form-field">
           <label>Discipline</label>
-          <select id="growFormDisc" required>
+          <select id="growFormDisc" name="discipline" required>
             <option value="" disabled selected>Select discipline</option>
-            <!-- Options injected by js/main.js → populateDisciplineSelect() -->
+            <!-- Options loaded from GET /api/disciplines -->
           </select>
         </div>
       </div>
 
       <div class="grow-form-field">
         <label>Title</label>
-        <input type="text" placeholder="e.g. 500h Pilates Teacher Training — Koh Samui" required />
+        <input type="text" name="title" placeholder="e.g. 500h Pilates Teacher Training — Koh Samui" required />
       </div>
 
       <div class="grow-form-row">
         <div class="grow-form-field">
           <label>Location</label>
-          <input type="text" placeholder="City, Country" required />
+          <input type="text" name="location" placeholder="City, Country" required />
         </div>
         <div class="grow-form-field">
           <label>Date(s)</label>
-          <input type="text" placeholder="e.g. November 2026" required />
+          <input type="text" name="date_label" placeholder="e.g. November 2026" required />
         </div>
       </div>
 
       <div class="grow-form-field">
         <label>Description / Bio</label>
-        <textarea rows="4" placeholder="Tell the community about your offering — what makes it special, who it's for, what's included..." required></textarea>
+        <textarea name="description" rows="4" placeholder="Tell the community about your offering — what makes it special, who it's for, what's included..." required></textarea>
       </div>
 
       <div class="grow-form-field">
         <label>Link to Your Website or Event Page</label>
-        <input type="url" placeholder="https://..." />
+        <input type="url" name="external_url" placeholder="https://..." />
       </div>
 
       <div class="grow-form-field">
-        <label>Photos</label>
+        <label>Cover Image</label>
         <div class="grow-form-upload" id="growUploadArea">
-          <input type="file" id="growFileInput" multiple accept="image/*" style="display:none;" />
+          <input type="file" id="growFileInput" name="cover_image" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none;" />
           <div class="grow-form-upload-inner" onclick="document.getElementById('growFileInput').click()">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-            <span>Click to upload images</span>
-            <span class="grow-form-upload-hint">JPG, PNG up to 5MB each</span>
+            <span>Click to upload a cover image</span>
+            <span class="grow-form-upload-hint">JPG, PNG, GIF or WEBP up to 5MB</span>
           </div>
+          <img id="growImagePreview" alt="Selected Grow cover preview" style="display:none;width:100%;height:220px;object-fit:cover;border-radius:14px;margin-top:12px;" />
           <div class="grow-form-file-list" id="growFileList"></div>
+        </div>
+      </div>
+
+      <div class="grow-form-row">
+        <div class="grow-form-field">
+          <label>Total Spots</label>
+          <input type="number" name="spots" min="1" step="1" placeholder="e.g. 20" />
+        </div>
+        <div class="grow-form-field">
+          <label>Spots Left</label>
+          <input type="number" name="spots_left" min="0" step="1" placeholder="Cannot exceed total spots" />
         </div>
       </div>
 
       <!-- Duration -->
       <div class="grow-form-section-label">Listing Duration</div>
-      <div class="grow-form-duration-options">
+      <div class="grow-form-duration-options" id="growTierOptions">
         <label class="grow-form-duration">
-          <input type="radio" name="duration" value="week" required />
+          <input type="radio" name="pricing_tier_id" value="1" required />
           <div class="grow-form-duration-card">
-            <span class="grow-form-duration-label">1 Week</span>
-            <span class="grow-form-duration-price">$29</span>
+            <span class="grow-form-duration-label">1 Month</span>
+            <span class="grow-form-duration-price">$30</span>
           </div>
         </label>
         <label class="grow-form-duration">
-          <input type="radio" name="duration" value="month" />
+          <input type="radio" name="pricing_tier_id" value="2" />
           <div class="grow-form-duration-card popular">
             <span class="grow-form-duration-badge">Popular</span>
-            <span class="grow-form-duration-label">1 Month</span>
-            <span class="grow-form-duration-price">$69</span>
+            <span class="grow-form-duration-label">3 Months</span>
+            <span class="grow-form-duration-price">$40</span>
           </div>
         </label>
         <label class="grow-form-duration">
-          <input type="radio" name="duration" value="3months" />
+          <input type="radio" name="pricing_tier_id" value="3" />
           <div class="grow-form-duration-card">
-            <span class="grow-form-duration-label">3 Months</span>
-            <span class="grow-form-duration-price">$149</span>
+            <span class="grow-form-duration-label">6 Months</span>
+            <span class="grow-form-duration-price">$60</span>
           </div>
         </label>
       </div>
 
       <button type="submit" class="grow-form-submit">Submit & Proceed to Payment</button>
-      <p class="grow-form-note">We'll review your listing and send you a payment link via email within 24 hours.</p>
+      <p class="grow-form-note">Payment is charged during submission. Your listing goes live after admin approval.</p>
     </form>
   </div>
 </div>
@@ -452,10 +470,12 @@
      </div>
   </div>
 </footer>
+<script src="https://js.stripe.com/v3/"></script>
  <script src="js/navbar.js"></script>
 <script src="js/main.js"></script>
 <script src="js/translate.js"></script>
 <script src="js/grow-listing.js"></script>
+<script src="js/grow-public-payment.js"></script>
 
 </body>
 </html>

@@ -68,26 +68,6 @@ button { font-family: 'DM Sans', sans-serif; }
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-@keyframes heroSlide {
-  0%, 42% { opacity: 1; }
-  50%, 92% { opacity: 0; }
-  100% { opacity: 1; }
-}
-@keyframes heroSlide2 {
-  0%, 42% { opacity: 0; }
-  50%, 92% { opacity: 1; }
-  100% { opacity: 0; }
-}
-@keyframes kenBurns1 {
-  0% { transform: scale(1) translate(0, 0); }
-  50% { transform: scale(1.08) translate(-1%, -1%); }
-  100% { transform: scale(1) translate(0, 0); }
-}
-@keyframes kenBurns2 {
-  0% { transform: scale(1.05) translate(1%, 0); }
-  50% { transform: scale(1) translate(0, 1%); }
-  100% { transform: scale(1.05) translate(1%, 0); }
-}
 
 .reveal {
   opacity: 0; transform: translateY(30px);
@@ -163,97 +143,75 @@ button { font-family: 'DM Sans', sans-serif; }
 
 
 /* ═══════════════════════════════════════════════
-   HERO — Image Slideshow
+   HOME — Static Banner + Search
    ═══════════════════════════════════════════════ */
-.hero {
-  min-height: 100vh; position: relative;
-  display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
-  overflow: hidden; padding: 100px 24px 60px;
+
+/* Banner image (static, height-capped) */
+.home-banner {
+  position: relative;
+  padding-top: 96px;                     /* fixed navbar ko clear karta hai */
+  background: var(--bg);
+  overflow: hidden;
 }
-.hero-slides {
-  position: absolute; inset: 0; z-index: 0;
-}
-.hero-slide {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-}
-.hero-slide img {
-  width: 100%; height: 100%; object-fit: cover;
-}
-.hero-slide:nth-child(1) {
-  animation: heroSlide 12s ease-in-out infinite;
-}
-.hero-slide:nth-child(1) img {
-  animation: kenBurns1 12s ease-in-out infinite;
-}
-.hero-slide:nth-child(2) {
-  animation: heroSlide2 12s ease-in-out infinite;
-}
-.hero-slide:nth-child(2) img {
-  animation: kenBurns2 12s ease-in-out infinite;
-}
-.hero-overlay {
-  position: absolute; inset: 0; z-index: 1;
-  background: linear-gradient(
-    180deg,
-    rgba(62, 61, 56, 0.45) 0%,
-    rgba(180, 255, 90, 0.2) 50%,
-    rgba(62, 61, 56, 0.55) 100%
-  );
-}
-.hero-content {
-  position: relative; z-index: 2; text-align: center; max-width: 820px;
-  animation: fadeUp 0.9s cubic-bezier(.22, 1, .36, 1) 0.2s both;
-}
-.hero-badge {
-  display: inline-block; padding: 6px 18px; border-radius: var(--radius-pill);
-  border: 1px solid rgba(245, 252, 166, 0.4); margin-bottom: 28px;
-  background: rgba(245, 252, 166, 0.1);
-}
-.hero-badge span {
-  color: var(--lime); font-size: 12px; font-weight: 700;
-  letter-spacing: 2.5px; text-transform: uppercase;
-}
-.hero h1 {
-  font-family: 'Unbounded', cursive;
-  font-size: clamp(48px, 7.5vw, 92px); font-weight: 900;
-  line-height: 1.0; margin: 0 0 20px;
-  letter-spacing: -2px; color: #fff;
-}
-.hero h1 span { color: var(--lime); }
-.hero-sub {
-  font-size: clamp(17px, 2.2vw, 22px); color: rgba(255, 255, 255, 0.8);
-  line-height: 1.6; max-width: 520px; margin: 0 auto 10px; font-weight: 400;
-}
-.hero-desc {
-  font-size: 15px; color: rgba(255, 255, 255, 0.5); line-height: 1.7;
-  max-width: 480px; margin: 0 auto 44px;
+.home-banner-img {
+  display: block;
+  width: 100%;
+  /* height: clamp(280px, 42vh, 460px);     banner ko tall hone se rokta hai */
+  object-fit: cover;
+  object-position: center;               /* logo clip ho to 'center top' / 'center 30%' kar do */
 }
 
-/* ─── HERO SEARCH ─── */
+/* Search band (banner ke neeche coloured section) */
+.home-search {
+  background: linear-gradient(135deg, #B4FF5A 0%, #A6F24D 60%, #8FE03D 100%);            /* brand yellow — green chahiye to #B4FF5A daal do */
+  padding: 48px 24px 40px;
+}
+.home-search-inner {
+  max-width: 660px;
+  margin: 0 auto;
+  text-align: center;
+}
+.home-search-welcome {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(13px, 1.6vw, 15px);   /* chhota text */
+  font-weight: 500;
+  color: var(--text-mid);
+  line-height: 1.5;
+  max-width: 520px;
+  margin: 0 auto 10px;
+}
+.home-search-tagline {
+  font-family: 'Unbounded', cursive;
+  font-size: clamp(22px, 3.2vw, 34px);   /* bada + bold */
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+  margin: 0 0 22px;
+}
+
+/* ─── SEARCH BAR (light theme — coloured band pe baithti hai) ─── */
 .search-container { max-width: 660px; margin: 0 auto; width: 100%; }
 .search-bar-main {
   display: flex; align-items: center;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  background: var(--white);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   padding: 6px 6px 6px 20px;
   transition: border-color 0.3s, box-shadow 0.3s; position: relative;
   z-index: 2;
 }
 .search-bar-main:focus-within {
-  border-color: rgba(245, 252, 166, 0.5);
-  box-shadow: 0 4px 32px rgba(180, 255, 90, 0.15);
+  border-color: var(--lime-dark);
+  box-shadow: 0 8px 32px rgba(180, 255, 90, 0.18);
 }
-.search-icon { color: rgba(255, 255, 255, 0.5); margin-right: 12px; flex-shrink: 0; }
+.search-icon { color: var(--text-mid); margin-right: 12px; flex-shrink: 0; }
 .search-bar-main input {
   flex: 1; background: transparent; border: none; outline: none;
-  color: #fff; font-size: 15px; font-family: 'DM Sans', sans-serif; padding: 13px 0;
+  color: var(--text); font-size: 15px; font-family: 'DM Sans', sans-serif; padding: 13px 0;
   min-width: 0;
 }
-.search-bar-main input::placeholder { color: rgba(255, 255, 255, 0.4); }
+.search-bar-main input::placeholder { color: var(--text-light); }
 .search-btn {
   background: var(--coral); color: var(--text); border: none;
   padding: 13px 28px; font-weight: 700; font-size: 13px;
@@ -269,6 +227,7 @@ button { font-family: 'DM Sans', sans-serif; }
   background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.14); z-index: 100;
   max-height: 260px; overflow-y: auto; animation: slideDown 0.2s ease;
+  text-align: left;
 }
 .search-autocomplete.show { display: block; }
 .autocomplete-item {
@@ -283,52 +242,24 @@ button { font-family: 'DM Sans', sans-serif; }
 
 /* Filter row */
 .search-filters {
-  display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; justify-content: center; z-index: 1; 
+  display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; justify-content: center;
 }
 .filter-select-wrap { position: relative; }
 .filter-select {
   appearance: none; -webkit-appearance: none;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px;
+  background: var(--white);
+  border: 1px solid var(--border); border-radius: 12px;
   padding: 10px 36px 10px 14px; font-size: 13px;
   font-family: 'DM Sans', sans-serif;
-  color: rgba(255, 255, 255, 0.7); font-weight: 500;
+  color: var(--text-mid); font-weight: 500;
   cursor: pointer; transition: border-color 0.3s; min-width: 140px;
 }
-.filter-select:focus { outline: none; border-color: rgba(180, 255, 90, 0.6); }
+.filter-select:focus { outline: none; border-color: var(--lime-dark); }
 .filter-select option { background: var(--white); color: var(--text); }
 .filter-arrow {
   position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  pointer-events: none; color: rgba(255, 255, 255, 0.4); font-size: 10px;
+  pointer-events: none; color: var(--text-light); font-size: 10px;
 }
-
-/* Stats */
-.hero-stats {
-  display: flex; justify-content: center; gap: 40px;
-  margin-top: 52px; flex-wrap: wrap;
-}
-.stat { text-align: center; }
-.stat-val {
-  font-family: 'Unbounded', cursive; font-size: 26px;
-  font-weight: 800; color: var(--lime);
-}
-.stat-label {
-  font-size: 11px; color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; font-weight: 500;
-}
-
-/* Slide indicators */
-.hero-dots {
-  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
-  z-index: 3; display: flex; gap: 8px;
-}
-.hero-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25); transition: all 0.4s;
-  cursor: pointer; border: none;
-}
-.hero-dot.active { background: var(--lime); width: 24px; border-radius: 4px; }
 
 
 /* ═══════════════════════════════════════════════
@@ -489,9 +420,9 @@ button { font-family: 'DM Sans', sans-serif; }
   font-size: clamp(34px, 5vw, 54px);
   font-weight: 900; color: #fff; line-height: 1.05;
 }
-.page-hero-content h1 span { color: var(--lime); }
+.page-hero-content h1 span { color: var(--coral); }
 .page-hero-content p {
-  font-size: 16px; color: rgba(255, 255, 255, 0.65);
+  font-size: 16px; color: #fff;
   margin-top: 12px; max-width: 480px; line-height: 1.6;
 }
 
@@ -792,18 +723,17 @@ footer {
   .page-hero { padding: 0 20px 40px; }
 }
 @media (max-width: 600px) {
-  .hero-stats { gap: 20px; }
   .footer-grid { grid-template-columns: 1fr; }
   .profiles-grid { grid-template-columns: 1fr; }
   .steps-grid { grid-template-columns: 1fr; }
   .search-filters { flex-direction: column; align-items: stretch; }
   .filter-select { width: 100%; min-width: 0; }
-  .hero { padding: 100px 16px 50px; }
-  .hero h1 { font-size: clamp(40px, 12vw, 72px); }
+  .home-banner-img { height: clamp(200px, 38vh, 340px); }
+  .home-search { padding: 36px 18px 32px; }
 }
 
 /* ═══════════════════════════════════════════════
-   GROW LISTING FORM — Add this to your style.css
+   GROW LISTING FORM
    ═══════════════════════════════════════════════ */
 
 /* Overlay */
@@ -1303,54 +1233,3 @@ footer {
   .hamburger { display: flex; }
   .btn-nav-login, .btn-nav-signup { display: none; }
 }
-
-.home-banner {
-  position: relative;
-  padding-top: 96px;          /* fixed navbar ko clear karta hai */
-  background: var(--bg);
-  overflow: hidden;
-}
-.home-banner-img {
-  display: block;
-  width: 100%;
-  height: auto;               /* natural aspect — logo kabhi crop nahi hoga */
-}
-
-/* ── OPTION 1: search image ke UPAR (bottom area me overlay) ── */
-.home-banner--overlay .home-banner-search {
-  position: absolute;
-  left: 50%;
-  bottom: 7%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 720px;
-  padding: 0 24px;
-  z-index: 5;
-}
-/* glass/dark search style yahan as-is chalega (image ke upar hai) */
-
-/* ── OPTION 2: search image ke NEECHE (light background pe) ── */
-.home-banner-search--below {
-  padding: 36px 24px 8px;
-  background: var(--bg);
-}
-.home-banner-search--below .search-container { margin: 0 auto; }
-
-/* light theme overrides — solid white bar, dark text */
-.home-banner-search--below .search-bar-main {
-  background: var(--white);
-  border: 1px solid var(--border);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-  backdrop-filter: none; -webkit-backdrop-filter: none;
-}
-.home-banner-search--below .search-bar-main input { color: var(--text); }
-.home-banner-search--below .search-bar-main input::placeholder { color: var(--text-light); }
-.home-banner-search--below .search-icon { color: var(--text-light); }
-.home-banner-search--below .filter-select {
-  background: var(--white);
-  border: 1px solid var(--border);
-  color: var(--text-mid);
-  backdrop-filter: none; -webkit-backdrop-filter: none;
-}
-.home-banner-search--below .filter-select option { background: var(--white); color: var(--text); }
-.home-banner-search--below .filter-arrow { color: var(--text-light); }
