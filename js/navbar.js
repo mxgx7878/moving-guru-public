@@ -12,7 +12,7 @@
 (function () {
 
   // ─── LOGIN PORTAL URL ───
-  const LOGIN_URL = 'https://moving-guru.vercel.app/login';
+  const LOGIN_URL = 'https://portal.movingguru.co/login';
 
   // ─── AUTH HELPERS ───
   function getUser() {

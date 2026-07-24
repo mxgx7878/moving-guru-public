@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  //const apiBase = 'http://localhost:8000/api'
+  // const apiBase = 'http://localhost:8000/api'
   const apiBase = 'https://movingguru.co/moving-guru-backend/public/api'
   const form = document.getElementById('growListingForm');
   const tierContainer = document.getElementById('growTierOptions');
@@ -27,6 +27,10 @@
   let card = null;
   let modal = null;
   let submitting = false;
+  let appliedPromo = null;       // { code, discountAmount, finalAmount, currency, ... }
+  let selectedTierInfo = null;   // { id, name, price, currency } for the modal session
+  let intentInputs = null;       // { contactName, contactEmail, pricingTierId } for intent (re)creation
+  const tiersById = {};          // id -> tier record
 
   if (!form) return;
 
@@ -57,6 +61,7 @@
     try {
       const body = await request('/grow-post-tiers');
       const tiers = Array.isArray(body.data) ? body.data : [];
+      tiers.forEach((tier) => { tiersById[String(tier.id)] = tier; });
       tierContainer.innerHTML = tiers.map((tier, index) => `
         <label class="grow-form-duration">
           <input type="radio" name="pricing_tier_id" value="${tier.id}" ${index === 0 ? 'required checked' : ''} />
@@ -102,6 +107,14 @@
     }
   };
 
+  const validateDates = (data) => {
+    const from = data.get('date_from');
+    const to = data.get('date_to');
+    if (from && to && from > to) {
+      throw new Error('Start date must be on or before the end date.');
+    }
+  };
+
   const ensureModal = () => {
     if (modal) return modal;
     modal = document.createElement('div');
@@ -114,6 +127,15 @@
           <button type="button" data-close style="border:0;background:transparent;font-size:24px;cursor:pointer">&times;</button>
         </div>
         <div data-summary style="margin:18px 0;padding:14px;border-radius:14px;background:#f7f5f0;font-weight:700"></div>
+        <label style="display:block;font-size:12px;font-weight:700;margin-bottom:8px">Promo code</label>
+        <div style="display:flex;gap:8px;margin-bottom:6px">
+          <input data-promo-input type="text" placeholder="Have a promo code?" autocomplete="off"
+            style="flex:1;min-width:0;border:1px solid #dcd6cc;border-radius:12px;padding:12px;text-transform:uppercase;font-size:13px" />
+          <button type="button" data-promo-apply
+            style="border:0;border-radius:12px;background:#1a1a18;color:#fff;padding:0 16px;font-weight:700;font-size:13px;cursor:pointer">Apply</button>
+        </div>
+        <p data-promo-msg style="display:none;font-size:12px;margin:0 0 14px"></p>
+        <div style="height:8px"></div>
         <label style="display:block;font-size:12px;font-weight:700;margin-bottom:8px">Card details</label>
         <div data-card style="border:1px solid #dcd6cc;border-radius:12px;padding:14px;background:#fff"></div>
         <p data-error style="display:none;color:#b42318;font-size:12px;margin:10px 0 0"></p>
@@ -130,7 +152,77 @@
       modal.style.display = 'none';
     });
     modal.querySelector('[data-pay]').addEventListener('click', payAndSubmit);
+    const promoInput = modal.querySelector('[data-promo-input]');
+    modal.querySelector('[data-promo-apply]').addEventListener('click', applyPromo);
+    promoInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); applyPromo(); }
+    });
     return modal;
+  };
+
+  const fmtMoney = (amount, currency) => new Intl.NumberFormat('en-AU', {
+    style: 'currency', currency: String(currency || selectedTierInfo?.currency || 'AUD').toUpperCase(),
+  }).format(Number(amount || 0));
+
+  // Render the price summary block, reflecting any applied promo discount.
+  const renderSummary = () => {
+    if (!modal || !selectedTierInfo) return;
+    const box = modal.querySelector('[data-summary]');
+    const name = escapeHtml(selectedTierInfo.name || 'selected duration');
+    if (appliedPromo) {
+      box.innerHTML =
+        `<div>Listing: ${name}</div>` +
+        `<div style="display:flex;justify-content:space-between;font-weight:500;margin-top:8px;color:#6b6b66">` +
+          `<span>Subtotal</span><span>${escapeHtml(fmtMoney(selectedTierInfo.price))}</span></div>` +
+        `<div style="display:flex;justify-content:space-between;font-weight:500;color:#3f7d17">` +
+          `<span>Discount (${escapeHtml(appliedPromo.code)})</span><span>-${escapeHtml(fmtMoney(appliedPromo.discountAmount))}</span></div>` +
+        `<div style="display:flex;justify-content:space-between;margin-top:6px;padding-top:6px;border-top:1px solid #e5e0d8">` +
+          `<span>Total due</span><span>${escapeHtml(fmtMoney(appliedPromo.finalAmount))}</span></div>`;
+    } else {
+      box.textContent = `Listing: ${selectedTierInfo.name || 'selected duration'} — ${fmtMoney(selectedTierInfo.price)}`;
+    }
+  };
+
+  const showPromoMsg = (message, ok) => {
+    if (!modal) return;
+    const el = modal.querySelector('[data-promo-msg]');
+    el.textContent = message || '';
+    el.style.color = ok ? '#3f7d17' : '#b42318';
+    el.style.display = message ? 'block' : 'none';
+  };
+
+  // Validate the entered code against the selected tier and update the summary.
+  const applyPromo = async () => {
+    if (submitting || !selectedTierInfo) return;
+    const input = modal.querySelector('[data-promo-input]');
+    const code = (input.value || '').trim().toUpperCase();
+    if (!code) { appliedPromo = null; renderSummary(); showPromoMsg('', false); return; }
+    const applyBtn = modal.querySelector('[data-promo-apply]');
+    applyBtn.disabled = true;
+    try {
+      const body = await request('/grow-promo-codes/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, pricingTierId: Number(selectedTierInfo.id) }),
+      });
+      appliedPromo = { ...body.data, code };
+      renderSummary();
+      showPromoMsg(`Code applied — you save ${fmtMoney(appliedPromo.discountAmount)}.`, true);
+    } catch (error) {
+      appliedPromo = null;
+      renderSummary();
+      showPromoMsg(error.message || 'Invalid promo code.', false);
+    } finally {
+      applyBtn.disabled = false;
+    }
+  };
+
+  const resetPromoUI = () => {
+    appliedPromo = null;
+    if (!modal) return;
+    const input = modal.querySelector('[data-promo-input]');
+    if (input) input.value = '';
+    showPromoMsg('', false);
   };
 
   const showError = (message) => {
@@ -152,16 +244,35 @@
   const buildPostData = () => {
     const source = new FormData(form);
     const payload = new FormData();
+
+    // Every scalar field the /public/grow-posts API accepts — kept in sync
+    // with the authenticated portal's Grow form.
     [
-      'contact_name', 'contact_email', 'contact_phone', 'organization_name', 'type', 'title',
-      'description', 'location', 'date_label', 'external_url', 'spots', 'spots_left',
+      'contact_name', 'contact_email', 'contact_phone', 'organization_name',
+      'type', 'title', 'subtitle', 'description', 'location', 'price',
+      'date_from', 'date_to', 'external_url', 'spots', 'spots_left',
     ].forEach((key) => {
       const value = source.get(key);
       if (value !== null && value !== '') payload.append(key, value);
     });
+
+    // Disciplines — single select on the public form, sent as an array.
     const discipline = source.get('discipline');
     if (discipline) payload.append('disciplines[0]', discipline);
-    if (fileInput?.files?.[0]) payload.append('cover_image', fileInput.files[0]);
+
+    // Tags — comma-separated input → tags[] array (same as the portal).
+    const tagsRaw = source.get('tags') || '';
+    String(tagsRaw)
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean)
+      .forEach((tag, i) => payload.append(`tags[${i}]`, tag));
+
+    // Cover image — the actual File, so it is uploaded and stored server-side.
+    const coverFile = fileInput?.files?.[0]
+      || (source.get('cover_image') instanceof File ? source.get('cover_image') : null);
+    if (coverFile) payload.append('cover_image', coverFile);
+
     payload.append('payment_intent_id', payment.paymentIntentId);
     payload.append('submission_token', payment.submissionToken);
     return payload;
@@ -173,6 +284,23 @@
     showError('');
     try {
       if (!payment.confirmed) {
+        // Make sure the intent reflects the currently-applied promo (or lack of
+        // one). Re-create it only when the desired code differs from the code
+        // baked into the existing intent. The previous un-confirmed intent is
+        // never captured, so no charge is duplicated.
+        const desiredCode = appliedPromo?.code || null;
+        if (desiredCode !== payment.promoCode) {
+          const body = await request('/public/grow-payments/intents', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...intentInputs,
+              ...(desiredCode ? { promoCode: desiredCode } : {}),
+            }),
+          });
+          payment = { ...body.data, confirmed: false, promoCode: desiredCode };
+        }
+
         const result = await stripe.confirmCardPayment(payment.clientSecret, {
           payment_method: { card },
         });
@@ -216,28 +344,44 @@
     const submitButton = form.querySelector('[type="submit"]');
     try {
       validateSpots(data);
+      validateDates(data);
       const selectedTier = form.querySelector('[name="pricing_tier_id"]:checked');
       if (!selectedTier) throw new Error('Choose a listing duration.');
       submitButton.disabled = true;
       submitButton.textContent = 'Preparing secure payment…';
+
+      // Remember the inputs so the intent can be re-created with a promo at pay time.
+      intentInputs = {
+        contactName: data.get('contact_name'),
+        contactEmail: data.get('contact_email'),
+        pricingTierId: Number(selectedTier.value),
+      };
+      const tierRecord = tiersById[String(selectedTier.value)] || {};
+      selectedTierInfo = {
+        id: selectedTier.value,
+        name: tierRecord.name || selectedTier.closest('label')?.innerText?.trim() || 'selected duration',
+        price: Number(tierRecord.price ?? 0),
+        currency: tierRecord.currency || 'AUD',
+      };
+
+      // Initial (full-price) intent — needed to obtain the publishable key and
+      // mount the card. If a promo is applied, the intent is re-created with the
+      // discounted amount at pay time (the un-confirmed full-price intent is
+      // never charged).
       const body = await request('/public/grow-payments/intents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contactName: data.get('contact_name'),
-          contactEmail: data.get('contact_email'),
-          pricingTierId: Number(selectedTier.value),
-        }),
+        body: JSON.stringify(intentInputs),
       });
-      payment = { ...body.data, confirmed: false };
+      payment = { ...body.data, confirmed: false, promoCode: null };
       if (!payment.publishableKey) throw new Error('Stripe publishable key is not configured.');
       stripe = window.Stripe(payment.publishableKey);
       card?.unmount();
       card = stripe.elements().create('card', { hidePostalCode: true });
       const paymentModal = ensureModal();
       showError('');
-      paymentModal.querySelector('[data-summary]').textContent =
-        `Listing: ${selectedTier.closest('label')?.innerText?.trim() || 'selected duration'}`;
+      resetPromoUI();
+      renderSummary();
       paymentModal.style.display = 'flex';
       card.mount(paymentModal.querySelector('[data-card]'));
     } catch (error) {

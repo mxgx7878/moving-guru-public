@@ -548,6 +548,51 @@ function ensureGrowFeaturedStyles() {
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     }
     .grow-card.featured .grow-card-head { padding-right: 90px; }
+
+    /* ── Richer card content ─────────────────────────────── */
+    .grow-card-cover {
+      width: calc(100% + 2px);
+      height: 172px;
+      object-fit: cover;
+      margin: -1px -1px 14px;
+      border-radius: 16px 16px 0 0;
+      display: block;
+    }
+    .grow-card .grow-subtitle {
+      color: var(--text-light, #6B6B66);
+      font-size: 13px;
+      margin: 2px 0 8px;
+    }
+    .grow-card .grow-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      margin: 10px 0 4px;
+      font-size: 12.5px;
+      color: var(--text-light, #6B6B66);
+    }
+    .grow-card .grow-meta b { color: var(--dark, #1A1A18); font-weight: 700; }
+    .grow-card .grow-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0 4px;
+    }
+    .grow-card .grow-chip {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--lime, #F5FDA6);
+      color: var(--dark, #1A1A18);
+    }
+    .grow-card .grow-chip.muted { background: #F1EEE7; color: #6B6B66; }
+    .grow-card .grow-posted-by {
+      font-size: 11.5px;
+      color: var(--text-light, #9A9A94);
+      margin-top: 6px;
+    }
   `;
   document.head.appendChild(s);
 }
@@ -586,10 +631,31 @@ async function initGrow() {
     );
     return;
   }
- 
+
+  populateGrowFilters();
   renderGrowEvents();
 }
- 
+
+/**
+ * Build the Discipline filter from the disciplines that actually appear in the
+ * loaded posts, so every selectable option has matching results. (Country,
+ * Month and Type stay as their static lists and are matched leniently below.)
+ */
+function populateGrowFilters() {
+  const discSel = document.getElementById('growDisc');
+  if (!discSel) return;
+  const set = new Set();
+  growPosts.forEach(e => (e.disciplines || []).forEach(d => {
+    const v = String(d || '').trim();
+    if (v) set.add(v);
+  }));
+  const current = discSel.value;
+  discSel.innerHTML = ['<option value="">All Disciplines</option>']
+    .concat([...set].sort((a, b) => a.localeCompare(b)).map(d => `<option>${escapeHtml(d)}</option>`))
+    .join('');
+  if (current) discSel.value = current;
+}
+
 document.addEventListener('DOMContentLoaded', initGrow);
  
  
@@ -615,13 +681,19 @@ function toGrowEvent(p) {
     id:        p?.id,
     type:      typeLabel,
     typeRaw:   p?.type,
-    date:      dateLabel || 'TBA',
+    date:      dateLabel || p?.date_label || 'TBA',
     month:     monthName,
     country,
     location:  p?.location || '',
     title:     p?.title || 'Untitled',
+    subtitle:  p?.subtitle || '',
     desc:      p?.description || '',
+    price:     p?.price || '',
+    spots:     (typeof p?.spots === 'number') ? p.spots : null,
+    spotsLeft: (typeof p?.spots_left === 'number') ? p.spots_left : null,
+    postedBy:  p?.posted_by || p?.organization_name || '',
     tag,
+    tags:      Array.isArray(p?.tags) ? p.tags : [],
     disciplines: disciplineNames,
     cover,
     externalUrl: p?.external_url || null,
@@ -687,11 +759,14 @@ function renderGrowEvents() {
   const disc    = document.getElementById('growDisc')?.value    || '';
   const type    = document.getElementById('growType')?.value    || '';
  
+  const lc = (v) => String(v || '').toLowerCase();
   const filtered = growPosts.filter(e => {
-    if (country && e.country !== country) return false;
-    if (month   && e.month   !== month)   return false;
-    if (disc    && !e.disciplines.includes(disc)) return false;
-    if (type    && e.typeRaw !== type.toLowerCase()) return false;
+    // Country: match anywhere in the location string, case-insensitive
+    // (handles "Koh Samui, Thailand", "thailand", etc.).
+    if (country && !lc(e.location).includes(lc(country))) return false;
+    if (month   && lc(e.month) !== lc(month)) return false;
+    if (disc    && !(e.disciplines || []).some(d => lc(d) === lc(disc))) return false;
+    if (type    && lc(e.typeRaw) !== lc(type)) return false;
     return true;
   });
  
@@ -704,26 +779,53 @@ function renderGrowEvents() {
     return;
   }
 
-  console.log(filtered)
- 
-  grid.innerHTML = filtered.map((e, i) => `
-  
+  grid.innerHTML = filtered.map((e, i) => {
+    const cover = e.cover
+      ? `<img class="grow-card-cover" src="${escapeAttr(e.cover)}" alt="${escapeAttr(e.title)}" loading="lazy" onerror="this.style.display='none'" />`
+      : '';
+
+    const subtitle = e.subtitle ? `<p class="grow-subtitle">${escapeHtml(e.subtitle)}</p>` : '';
+
+    const metaBits = [];
+    if (e.price) metaBits.push(`<span>💲 <b>${escapeHtml(e.price)}</b></span>`);
+    if (typeof e.spotsLeft === 'number') {
+      metaBits.push(`<span>🎟️ <b>${e.spotsLeft}</b>${typeof e.spots === 'number' ? ` / ${e.spots}` : ''} spots left</span>`);
+    } else if (typeof e.spots === 'number') {
+      metaBits.push(`<span>🎟️ <b>${e.spots}</b> spots</span>`);
+    }
+    const meta = metaBits.length ? `<div class="grow-meta">${metaBits.join('')}</div>` : '';
+
+    const chipItems = [
+      ...e.disciplines.map((d) => `<span class="grow-chip">${escapeHtml(d)}</span>`),
+      ...e.tags.map((t) => `<span class="grow-chip muted">${escapeHtml(t)}</span>`),
+    ];
+    const chips = chipItems.length ? `<div class="grow-chips">${chipItems.join('')}</div>` : '';
+
+    const postedBy = e.postedBy ? `<p class="grow-posted-by">Posted by ${escapeHtml(e.postedBy)}</p>` : '';
+
+    return `
     <div class="grow-card${e.isFeatured ? ' featured' : ''} reveal reveal-d${Math.min(i + 1, 4)}">
+      ${cover}
       <div class="grow-card-head">
         <span class="grow-type">${escapeHtml(e.type)}</span>
         <span class="grow-date">${escapeHtml(e.date)}</span>
       </div>
       <h3>${escapeHtml(e.title)}</h3>
+      ${subtitle}
       <p class="grow-location">${escapeHtml(e.location)}</p>
       <p>${escapeHtml(e.desc)}</p>
+      ${meta}
+      ${chips}
+      ${postedBy}
       <div class="grow-card-foot">
         <span class="grow-tag">${escapeHtml(e.tag)}</span>
         ${e.externalUrl
           ? `<a class="grow-btn" href="${escapeAttr(e.externalUrl)}" target="_blank" rel="noopener noreferrer">More Info</a>`
-          : `<button class="grow-btn" onclick="openModal('signup');return false;">More Info</button>`}
+          : ` `}
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
   setTimeout(observeAll, 50);
 }
  
