@@ -288,19 +288,39 @@
     );
   };
 
+  // Delete the googtrans cookie across every domain/path scope it might have
+  // been set on (host-only, host, .host, and the registrable base domain).
+  // Google won't reliably revert to the original language unless ALL copies
+  // are gone.
+  function clearGoogTransCookies() {
+    const host = location.hostname;
+    const domains = ["", host, "." + host];
+    const parts = host.split(".");
+    if (parts.length > 2) {
+      const base = parts.slice(-2).join(".");
+      domains.push(base, "." + base);
+    }
+    const paths = ["/", location.pathname];
+    domains.forEach((d) => paths.forEach((p) => {
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=" + p + (d ? "; domain=" + d : "");
+    }));
+  }
+
   function translatePage(langCode) {
     if (langCode === "en") {
-      // Revert to original
-      const frame = document.querySelector("iframe.goog-te-banner-frame");
-      if (frame) {
-        const innerDoc = frame.contentDocument || frame.contentWindow.document;
-        const restoreBtn = innerDoc.querySelector(".goog-close-link");
+      // Best-effort: close Google's banner if it exists. Wrapped in try/catch
+      // because touching the (sometimes hidden/cross-origin) banner iframe can
+      // throw — and if it did, the cookie clear + reload below never ran, which
+      // is exactly why switching back to English used to fail.
+      try {
+        const frame = document.querySelector("iframe.goog-te-banner-frame");
+        const innerDoc = frame && (frame.contentDocument || frame.contentWindow.document);
+        const restoreBtn = innerDoc && innerDoc.querySelector(".goog-close-link");
         if (restoreBtn) restoreBtn.click();
-      }
-      // Fallback: clear the cookie
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + location.hostname;
-      setTimeout(() => location.reload(), 100);
+      } catch (e) { /* ignore — we reload below anyway */ }
+
+      clearGoogTransCookies();
+      setTimeout(() => location.reload(), 50);
       return;
     }
 
