@@ -65,6 +65,7 @@
     </div>
     <div class="footer-bottom">
       <p>&copy; ${YEAR} Moving Guru. All rights reserved.</p>
+      <p>Powered by <a href="https://graphicpty.com.au/" target="_blank" rel="noopener noreferrer">Graphics Pty Ltd</a></p>
     </div>
   </div>
 </footer>`;
